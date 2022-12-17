@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs"); // use for password encryption
 const jwt = require("jsonwebtoken"); // use for generating auth token
 const User = require("../schema/user"); // users schema
 
+const { JWT_TOKEN_EXPIRY, JWT_TOKEN } = process.env;
 // create account
 const createAccount = async (req, res) => {
   try {
@@ -39,13 +40,9 @@ const createAccount = async (req, res) => {
     });
 
     //generate jwt token
-    const token = jwt.sign(
-      { user_id: user._id, email },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "2h",
-      }
-    );
+    const token = jwt.sign({ user_id: user._id, email }, JWT_TOKEN, {
+      expiresIn: JWT_TOKEN_EXPIRY,
+    });
     user.token = token;
     res.status(201).json({
       success: true,
@@ -70,8 +67,8 @@ const loginAccount = async (req, res) => {
   }
 
   //generate jwt token
-  const token = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, {
-    expiresIn: "2h",
+  const token = jwt.sign({ user_id: user._id, email }, JWT_TOKEN, {
+    expiresIn: JWT_TOKEN_EXPIRY,
   });
   user.token = token;
   if (user && (await bcrypt.compare(password, user.password))) {

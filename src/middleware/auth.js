@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const config = process.env;
+const { JWT_TOKEN, HEADER_TOKEN_KEY } = process.env;
 
 const verifyToken = (req, res, next) => {
   console.log("_________________________ authenticating user");
-  const token = req.headers["x-token"];
+  const token = req.headers[HEADER_TOKEN_KEY];
 
   if (!token) {
     res.status(403).json({
@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
     });
   } else {
     try {
-      const decoded = jwt.verify(token, config.TOKEN_KEY);
+      const decoded = jwt.verify(token, JWT_TOKEN);
       req.user = decoded;
     } catch (error) {
       res.status(401).json({
