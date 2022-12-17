@@ -1,61 +1,82 @@
-const DB = require("../database/db.json");
-const { saveToDB } = require("../database/utils");
-let id = 5;
+const booksServices = require("../services/booksServices");
+
 const createNewBook = (req, res) => {
-  if (!req.body.title) {
+  const { title } = req.body;
+
+  if (!title) {
     res.status(400).send({
       success: false,
-      message: "invalid book title",
+      message: "title is require",
     });
   }
-  //save to DB
-  let book = { title: req.body.title, id: ++id };
-  DB.push(book);
-  saveToDB(DB);
-  res.send({
-    success: true,
-    message: "added new book",
-    book,
-  });
+
+  const newBook = {
+    title,
+  };
+
+  const createdBook = booksServices.createNewBook(newBook);
+
+  if (!createdBook) {
+    res.status(400).send({
+      success: false,
+      message: "book already exist",
+    });
+  } else {
+    res.status(201).send({
+      success: true,
+      message: "added new book",
+      data: createdBook,
+    });
+  }
 };
 
 const getAllBooks = (req, res) => {
-  res.send(DB);
+  const allBooks = booksServices.getAllBooks();
+  res.send({ success: true, rows: allBooks });
 };
 
 const getOneBook = (req, res) => {
-  let book = DB.find((book) => book.id == req.params.id);
-  if (!book) {
+  const { bookId } = req.params;
+  const oneBook = booksServices.getOneBook(bookId);
+  if (!oneBook) {
     res.status(404).send({
       success: false,
-      message: `book not found with id ${req.params.id}`,
+      message: `book not found with id ${bookId}`,
+    });
+  } else {
+    res.status(404).send({
+      success: true,
+      data: oneBook,
     });
   }
-  res.send(book);
 };
 
 const updateOneBook = (req, res) => {
-  let book = DB.find((book) => book.id == req.params.id);
-  if (!book) {
+  const { bookId } = req.params;
+  const book = req.body;
+  const updatedBook = booksServices.updateOneBook(bookId, book);
+  if (!updatedBook) {
     res.status(404).send({
       success: false,
-      message: `book not found with id ${req.params.id}`,
+      message: `book not found with id ${bookId}`,
     });
+  } else {
+    res.send({ success: true, message: "updated Successfully", updatedBook });
   }
-  book.title = req.body.title;
-  res.send({ success: true, message: "updated Successfully", book });
 };
 
 const deleteOneBook = (req, res) => {
-  let book = DB.find((book) => book.id == req.params.id);
-  if (!book) {
+  const { bookId } = req.params;
+  const deletedBook = booksServices.deleteOneBook(bookId);
+
+  if (!deletedBook) {
     res.status(404).send({
       success: false,
-      message: `book not found with id ${req.params.id}`,
+      message: `book not found with id ${bookId}`,
     });
+  } else {
+    res.send({ success: true, message: "Deleted Successfully", deletedBook });
   }
-
-  res.send({ success: true, message: "Deleted Successfully", book });
 };
 
 module.exports = {

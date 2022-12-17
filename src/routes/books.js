@@ -5,10 +5,10 @@ router.post("/", booksController.createNewBook);
 
 router.get("/", booksController.getAllBooks);
 
-router.get("/:id", booksController.getOneBook);
+router.get("/:bookId", booksController.getOneBook);
 
-router.put("/:id", booksController.updateOneBook);
+router.put("/:bookId", booksController.updateOneBook);
 
-router.delete("/:id", booksController.deleteOneBook);
+router.delete("/:bookId", booksController.deleteOneBook);
 
 module.exports = router;

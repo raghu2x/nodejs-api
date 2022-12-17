@@ -3,6 +3,14 @@ const jwt = require("jsonwebtoken"); // use for generating auth token
 const User = require("../schema/user"); // users schema
 
 const { JWT_TOKEN_EXPIRY, JWT_TOKEN } = process.env;
+
+// generate JWT token
+const generateToken = (data) => {
+  return jwt.sign(data, JWT_TOKEN, {
+    expiresIn: JWT_TOKEN_EXPIRY,
+  });
+};
+
 // create account
 const createAccount = async (req, res) => {
   try {
@@ -39,11 +47,7 @@ const createAccount = async (req, res) => {
       password: encryptedPassword,
     });
 
-    //generate jwt token
-    const token = jwt.sign({ user_id: user._id, email }, JWT_TOKEN, {
-      expiresIn: JWT_TOKEN_EXPIRY,
-    });
-    user.token = token;
+    user.token = generateToken({ user_id: user._id, email });
     res.status(201).json({
       success: true,
       message: "account created successfully",
@@ -59,26 +63,23 @@ const createAccount = async (req, res) => {
 const loginAccount = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+
   if (!user) {
-    res.status(400).json({
+    res.status(400).send({
       success: false,
       message: `user not found with email ${email}`,
     });
-  }
+  } else if (user && (await bcrypt.compare(password, user.password))) {
+    //set token
+    user.token = generateToken({ user_id: user._id, email });
 
-  //generate jwt token
-  const token = jwt.sign({ user_id: user._id, email }, JWT_TOKEN, {
-    expiresIn: JWT_TOKEN_EXPIRY,
-  });
-  user.token = token;
-  if (user && (await bcrypt.compare(password, user.password))) {
-    res.status(200).json({
+    res.status(200).send({
       success: true,
       message: "login successfull",
       user,
     });
   } else {
-    res.status(400).json({
+    res.status(400).send({
       success: false,
       message: "invalid password",
     });
