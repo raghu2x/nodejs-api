@@ -1,26 +1,19 @@
 const express = require("express");
+const router = express.Router();
 const fs = require("fs");
 const fsPromises = require("fs").promises;
-const app = express();
-const auth = require("./middleware/auth");
+const auth = require("../middleware/auth");
 let id = 4;
-app.use(express.json());
 
 let books = fs.readFile(`${__dirname}/books.json`, (err, data) => {
   books = JSON.parse(data);
 });
 
-app.get("/", auth, (req, res) => {
-  res.statusCode = 200;
-  res.send("welcome to node.js api's");
-});
-
-// basic demo api
-app.get("/api/books", auth, (req, res) => {
+router.get("/", auth, (req, res) => {
   res.send(books);
 });
 
-app.get("/api/books/:id", (req, res) => {
+router.get("/:id", (req, res) => {
   let book = books.find((book) => book.id == req.params.id);
   if (!book) {
     res.status(404).send({ error: `book not found with id ${req.params.id}` });
@@ -28,7 +21,7 @@ app.get("/api/books/:id", (req, res) => {
   res.send(book);
 });
 
-app.put("/api/books/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   let book = books.find((book) => book.id == req.params.id);
   if (!book) {
     res.status(404).send({ error: `book not found with id ${req.params.id}` });
@@ -37,7 +30,7 @@ app.put("/api/books/:id", (req, res) => {
   res.send({ message: "updated Successfully", book });
 });
 
-app.delete("/api/books/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   let book = books.find((book) => book.id == req.params.id);
   if (!book) {
     res.status(404).send({
@@ -48,7 +41,7 @@ app.delete("/api/books/:id", (req, res) => {
   res.send({ success: true, message: "Deleted Successfully", book });
 });
 
-app.post("/api/books", (req, res) => {
+router.post("/", (req, res) => {
   if (!req.body.title) {
     res.status(400).send({
       success: false,
@@ -80,4 +73,5 @@ app.post("/api/books", (req, res) => {
       console.log("Read Error: " + err);
     });
 });
-app.listen(3000);
+
+module.exports = router;
