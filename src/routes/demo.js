@@ -2,7 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const app = express();
-const auth = require("./auth");
+const auth = require("./middleware/auth");
 let id = 4;
 app.use(express.json());
 
