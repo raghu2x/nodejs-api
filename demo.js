@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const app = express();
+const auth = require("./auth");
 let id = 4;
 app.use(express.json());
 
@@ -9,13 +10,13 @@ let books = fs.readFile(`${__dirname}/books.json`, (err, data) => {
   books = JSON.parse(data);
 });
 
-app.get("/", (req, res) => {
+app.get("/", auth, (req, res) => {
   res.statusCode = 200;
   res.send("welcome to node.js api's");
 });
 
 // basic demo api
-app.get("/api/books", (req, res) => {
+app.get("/api/books", auth, (req, res) => {
   res.send(books);
 });
 

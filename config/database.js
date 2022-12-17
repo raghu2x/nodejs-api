@@ -7,11 +7,13 @@ exports.connect = () => {
     .connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      // useCreateIndex: true,
-      // useFindAndModify: true,
-      // strictQuery: false,
     })
-    .then(() => console.log("______________database connected Successfully"))
+    .then((res) => {
+      console.log(
+        "______________database connected Successfully"
+        // res.connections[0].collections.users
+      );
+    })
     .catch((err) => {
       console.log("__________________database connection failed");
       console.log(err);
