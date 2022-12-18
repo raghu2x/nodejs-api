@@ -13,76 +13,82 @@ const generateToken = (data) => {
 
 // create account
 const createAccount = async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+  const user = new User({
+    firstName,
+    lastName,
+    email,
+    password,
+  });
   try {
-    const { firstName, lastName, email, password } = req.body;
-    //validate fields
-    if (!(firstName && lastName && email && password)) {
-      res.status(400).send({
-        success: false,
-        message: "all fields is required",
-      });
-    }
+    await user.validate(); //validate schema fields
 
     // validate if existing user
     const oldUser = await User.findOne({ email });
-    // res.send(oldUser);
+
     if (oldUser) {
-      console.log("____________ user found", oldUser);
-      res.status(404).json({
-        success: false,
-        message: `user with email ${email} already exist`,
-        // user: oldUser,
-      });
+      throw {
+        message: `email already exist`,
+      };
     }
 
-    console.log("________________before password encrypted");
     // encrypt password
     const encryptedPassword = await bcrypt.hash(password, 10);
-    console.log("________________ password encrypted");
-    //   create user
-    const user = await User.create({
-      firstName,
-      lastName,
+
+    // create user
+    user = await User.create({
+      ...user,
       email: email.toLowerCase(),
       password: encryptedPassword,
     });
 
     user.token = generateToken({ user_id: user._id, email });
-    res.status(201).json({
+    res.status(201).send({
       success: true,
       message: "account created successfully",
-      user,
+      data: user,
     });
   } catch (error) {
     console.log("__________ an error", error);
-    // res.status(500).send(error);
+    res
+      .status(error.status || 400)
+      .send({ success: false, message: error.message || error });
   }
 };
 
 // login account
 const loginAccount = async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    await new User({ ...req.body }).validate(["email", "password"]); //validate feilds
+    //find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw {
+        message: `user not found with email ${email}`,
+      };
+    }
 
-  if (!user) {
-    res.status(400).send({
-      success: false,
-      message: `user not found with email ${email}`,
-    });
-  } else if (user && (await bcrypt.compare(password, user.password))) {
-    //set token
-    user.token = generateToken({ user_id: user._id, email });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      //set token
+      user.token = generateToken({ user_id: user._id, email });
 
-    res.status(200).send({
-      success: true,
-      message: "login successfull",
-      user,
-    });
-  } else {
-    res.status(400).send({
-      success: false,
-      message: "invalid password",
-    });
+      res.status(200).send({
+        success: true,
+        message: "login successfull",
+        user,
+      });
+    } else {
+      throw {
+        success: false,
+        message: "invalid password",
+      };
+    }
+  } catch (error) {
+    res
+      .status(error.status || 400)
+      .send({ success: false, message: error.message || error });
+    console.log("____________", error);
   }
 };
 

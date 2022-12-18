@@ -1,20 +1,16 @@
 {
   "books": [
     {
-      "title": "Twilight",
-      "id": 2
+      "title": "my book 1",
+      "id": "5c7657b0-1f43-438c-934c-5100d63b4dd7"
     },
     {
-      "title": "Lorien Legacies",
-      "id": 3
+      "title": "my book 2",
+      "id": "5f5d9fc5-8ba8-4be0-8b54-e5951c86fd95"
     },
     {
-      "title": "updated book name",
-      "id": 4
-    },
-    {
-      "title": "updated book name",
-      "id": 6
+      "title": "my book 4",
+      "id": "4e9d741f-e053-43e0-9e59-e68dfca431c4"
     }
   ]
 }

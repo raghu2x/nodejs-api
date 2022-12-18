@@ -10,7 +10,7 @@ app.use(express.json());
 
 // routes
 app.use("/api", testRoute);
-app.use("/api", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/books", auth, booksRouter);
 
 module.exports = app;
