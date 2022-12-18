@@ -1,16 +1,10 @@
 require("dotenv").config();
-require("./config/database").connect();
+require("./database/database").connect();
+const router = require("./router");
 const express = require("express");
 const app = express();
-const auth = require("./middleware/auth");
-const testRoute = require("./routes/test");
-const authRouter = require("./routes/authentication");
-const booksRouter = require("./routes/books");
-app.use(express.json());
 
-// routes
-app.use("/", testRoute);
-app.use("/api/auth", authRouter);
-app.use("/api/books", auth, booksRouter);
+app.use(express.json());
+app.use("/", router);
 
 module.exports = app;

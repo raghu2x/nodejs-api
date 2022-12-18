@@ -1,5 +1,3 @@
-const DB = require("./db.json");
-const { saveToDB } = require("../database/utils");
 const Book = require("../schema/book");
 const getAllBooks = async ({ limit, offset }) => {
   console.log("__________finding books");
