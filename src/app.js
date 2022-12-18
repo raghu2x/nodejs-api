@@ -9,7 +9,7 @@ const booksRouter = require("./routes/books");
 app.use(express.json());
 
 // routes
-app.use("/api", testRoute);
+app.use("/", testRoute);
 app.use("/api/auth", authRouter);
 app.use("/api/books", auth, booksRouter);
 
