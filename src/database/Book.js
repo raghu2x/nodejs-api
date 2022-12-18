@@ -1,45 +1,69 @@
 const Book = require("../schema/book");
+
 const getAllBooks = async ({ limit, offset }) => {
-  console.log("__________finding books");
-  const allBooks = await Book.find()
-    .skip(offset * limit || 0)
-    .limit(limit || 5);
-  return {
-    limit: limit || 5,
-    offset: offset || 0,
-    count: await Book.count(),
-    rows: await allBooks,
-  };
+  try {
+    const allBooks = await Book.find()
+      .skip(offset * limit || 0)
+      .limit(limit || 5);
+    return {
+      limit: limit || 5,
+      offset: offset || 0,
+      count: await Book.count(),
+      rows: allBooks,
+    };
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getOneBook = async (bookId) => {
-  const oneBook = await Book.findById(bookId);
-  return oneBook;
+  try {
+    const oneBook = await Book.findById(bookId);
+    if (!oneBook) {
+      throw `book not found with id: ${bookId}`;
+    }
+    return oneBook;
+  } catch (error) {
+    console.log("error book not found");
+    throw error;
+  }
 };
 
 const createNewBook = async (book) => {
-  let isOldBook = await Book.findOne({ title: book.title });
-
-  if (isOldBook) return;
-  const createdBook = await Book.create(book);
-  return createdBook;
+  try {
+    let isOldBook = await Book.findOne({ title: book.title });
+    if (isOldBook) {
+      throw `book alredy exist`;
+    }
+    // create book
+    const createdBook = await Book.create(book);
+    return createdBook;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateOneBook = async (bookId, book) => {
   try {
-    await Book.findByIdAndUpdate(bookId, book);
-    return await Book.findById(bookId);
+    const updatedBook = await Book.findByIdAndUpdate(bookId, book);
+    if (!updatedBook) {
+      throw `book not found with id ${bookId}`;
+    }
+    return await Book.findById(bookId); //TODO: Fix It
   } catch (error) {
-    return;
+    throw error;
   }
 };
 
 const deleteOneBook = async (bookId) => {
   try {
     const deletedBook = await Book.findByIdAndDelete(bookId);
-    return await deletedBook;
+    if (deletedBook) {
+      throw `book not found with Id: ${bookId}`;
+    }
+    return deletedBook;
   } catch (error) {
-    return;
+    throw error;
   }
 };
 module.exports = {

@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("./database/database").connect();
+require("./database/connection").connect();
 const router = require("./router");
 const express = require("express");
 const app = express();
