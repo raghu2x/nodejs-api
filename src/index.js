@@ -7,3 +7,5 @@ const { API_PORT } = process.env;
 app.listen(API_PORT, () => {
   console.log(`________________server is running at port ${API_PORT}`);
 });
+
+module.exports = app;
