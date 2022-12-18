@@ -1,43 +1,49 @@
 const DB = require("./db.json");
 const { saveToDB } = require("../database/utils");
-
-const getAllBooks = () => {
-  return DB.books;
+const Book = require("../schema/book");
+const getAllBooks = async ({ limit, offset }) => {
+  console.log("__________finding books");
+  const allBooks = await Book.find()
+    .skip(offset * limit || 0)
+    .limit(limit || 5);
+  return {
+    limit: limit || 5,
+    offset: offset || 0,
+    count: await Book.count(),
+    rows: await allBooks,
+  };
 };
 
-const getOneBook = (bookId) => {
-  let book = DB.books.find((x) => x.id === bookId);
-  return book;
+const getOneBook = async (bookId) => {
+  const oneBook = await Book.findById(bookId);
+  return oneBook;
 };
 
-const createNewBook = (book) => {
-  const isOldBook = DB.books.find((x) => x.title === book.title);
+const createNewBook = async (book) => {
+  let isOldBook = await Book.findOne({ title: book.title });
 
   if (isOldBook) return;
-
-  DB.books.push(book);
-  saveToDB(DB);
-  return book;
+  const createdBook = await Book.create(book);
+  return createdBook;
 };
 
-const updateOneBook = (bookId, book) => {
-  let bookIndex = DB.books.findIndex((x) => x.id == bookId);
-
-  if (bookIndex === -1) return;
-  DB.books[bookIndex] = { ...DB.books[bookIndex], ...book };
-  saveToDB(DB);
-  return DB.books[bookIndex];
+const updateOneBook = async (bookId, book) => {
+  try {
+    await Book.findByIdAndUpdate(bookId, book);
+    return await Book.findById(bookId);
+  } catch (error) {
+    return;
+  }
 };
 
-const deleteOneBook = (bookId) => {
-  let bookIndex = DB.books.findIndex((x) => x.id == bookId);
-  if (bookIndex === -1) return;
-
-  const deletedBook = DB.books.splice(bookIndex, 1);
-  saveToDB(DB);
-  return deletedBook;
+const deleteOneBook = async (bookId) => {
+  try {
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+    return await deletedBook;
+  } catch (error) {
+    return;
+  }
 };
-
 module.exports = {
   getAllBooks,
   getOneBook,

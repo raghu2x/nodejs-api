@@ -1,6 +1,5 @@
 const booksServices = require("../services/booksServices");
-
-const createNewBook = (req, res) => {
+const createNewBook = async (req, res) => {
   const { title } = req.body;
 
   if (!title) {
@@ -14,7 +13,7 @@ const createNewBook = (req, res) => {
     title,
   };
 
-  const createdBook = booksServices.createNewBook(newBook);
+  const createdBook = await booksServices.createNewBook(newBook);
 
   if (!createdBook) {
     res.status(400).send({
@@ -30,14 +29,14 @@ const createNewBook = (req, res) => {
   }
 };
 
-const getAllBooks = (req, res) => {
-  const allBooks = booksServices.getAllBooks();
-  res.send({ success: true, rows: allBooks });
+const getAllBooks = async (req, res) => {
+  const allBooks = await booksServices.getAllBooks(req.query);
+  res.send({ success: true, ...allBooks });
 };
 
-const getOneBook = (req, res) => {
+const getOneBook = async (req, res) => {
   const { bookId } = req.params;
-  const oneBook = booksServices.getOneBook(bookId);
+  const oneBook = await booksServices.getOneBook(bookId);
   if (!oneBook) {
     res.status(404).send({
       success: false,
@@ -51,10 +50,10 @@ const getOneBook = (req, res) => {
   }
 };
 
-const updateOneBook = (req, res) => {
+const updateOneBook = async (req, res) => {
   const { bookId } = req.params;
   const book = req.body;
-  const updatedBook = booksServices.updateOneBook(bookId, book);
+  const updatedBook = await booksServices.updateOneBook(bookId, book);
   if (!updatedBook) {
     res.status(404).send({
       success: false,
@@ -65,9 +64,9 @@ const updateOneBook = (req, res) => {
   }
 };
 
-const deleteOneBook = (req, res) => {
+const deleteOneBook = async (req, res) => {
   const { bookId } = req.params;
-  const deletedBook = booksServices.deleteOneBook(bookId);
+  const deletedBook = await booksServices.deleteOneBook(bookId);
 
   if (!deletedBook) {
     res.status(404).send({

@@ -14,7 +14,7 @@ const generateToken = (data) => {
 // create account
 const createAccount = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-  const user = new User({
+  let user = new User({
     firstName,
     lastName,
     email,
@@ -37,7 +37,8 @@ const createAccount = async (req, res) => {
 
     // create user
     user = await User.create({
-      ...user,
+      firstName,
+      lastName,
       email: email.toLowerCase(),
       password: encryptedPassword,
     });
@@ -49,7 +50,7 @@ const createAccount = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    console.log("__________ an error", error);
+    console.log("__________ an error");
     res
       .status(error.status || 400)
       .send({ success: false, message: error.message || error });
