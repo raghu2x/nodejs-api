@@ -6,32 +6,53 @@ const createNewBook = async (book) => {
     ...book,
     id: uuid(),
   };
-  const createdBook = await Book.createNewBook(bookToInsert);
-  return createdBook;
+  try {
+    const createdBook = await Book.createNewBook(bookToInsert);
+    return createdBook;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const getAllBooks = async (query) => {
-  const allBooks = await Book.getAllBooks(query);
-  return allBooks;
+  try {
+    const allBooks = await Book.getAllBooks(query);
+    return allBooks;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const getOneBook = async (bookId) => {
-  const oneBook = await Book.getOneBook(bookId);
-  return oneBook;
+  try {
+    const oneBook = await Book.getOneBook(bookId);
+    return oneBook;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const updateOneBook = async (bookId, book) => {
   const bookToUpdate = {
     title: book.title,
   };
-  const updatedBook = await Book.updateOneBook(bookId, bookToUpdate);
-  console.log("________inside book service", updatedBook);
-  return updatedBook;
+
+  try {
+    const updatedBook = await Book.updateOneBook(bookId, bookToUpdate);
+    console.log("________inside book service", updatedBook);
+    return updatedBook;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const deleteOneBook = async (bookId) => {
-  const deletedBook = await Book.deleteOneBook(bookId);
-  return deletedBook;
+  try {
+    const deletedBook = await Book.deleteOneBook(bookId);
+    return deletedBook;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 module.exports = {
