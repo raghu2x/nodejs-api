@@ -1,11 +1,8 @@
 const booksServices = require("../services/booksServices");
 
 const createNewBook = async (req, res) => {
-  const { title } = req.body;
-  const newBook = { title };
-
   try {
-    const createdBook = await booksServices.createNewBook(newBook);
+    const createdBook = await booksServices.createNewBook(req.body);
     res.status(201).send({
       success: true,
       message: "added new book",

@@ -4,8 +4,8 @@ const testRoute = require("./test");
 const authRouter = require("./authentication");
 const booksRouter = require("./books");
 
-router.use("/", testRoute);
 router.use("/api/auth", authRouter);
 router.use("/api/books", auth, booksRouter);
+router.use("/", testRoute);
 
 module.exports = router;
