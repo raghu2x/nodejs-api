@@ -2,12 +2,8 @@ const { v4: uuid } = require("uuid");
 const Book = require("../database/Book");
 
 const createNewBook = async (book) => {
-  const bookToInsert = {
-    ...book,
-    id: uuid(),
-  };
   try {
-    const createdBook = await Book.createNewBook(bookToInsert);
+    const createdBook = await Book.createNewBook(book);
     return createdBook;
   } catch (error) {
     throw new Error(error);
@@ -35,6 +31,7 @@ const getOneBook = async (bookId) => {
 const updateOneBook = async (bookId, book) => {
   const bookToUpdate = {
     title: book.title,
+    author: book.author,
   };
 
   try {
