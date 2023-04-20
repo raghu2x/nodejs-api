@@ -39,15 +39,19 @@ bookSchema.virtual('id').get(function () {
 const api = {
   get: {
     allowed: true,
+    auth: true,
   },
   put: {
     allowed: true,
+    auth: true,
   },
   post: {
     allowed: true,
+    auth: true,
   },
   delete: {
     allowed: true,
+    auth: true,
   },
 }
 
