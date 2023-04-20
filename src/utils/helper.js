@@ -10,4 +10,14 @@ const createError = (errorCode, recordId) => {
   return error
 }
 
-module.exports = { createError }
+const getPagination = (query = {}) => {
+  const { page = 1, size = 100, sortBy = '', ascending = true } = query
+  const offset = (page - 1) * size
+  const isAscending = ascending === 'true' || ascending === true
+  let sortConfig = {}
+  if (sortBy) sortConfig = { [sortBy]: isAscending ? 1 : -1 }
+
+  return { page, size, sortBy, sortConfig, offset, ascending: isAscending }
+}
+
+module.exports = { createError, getPagination }

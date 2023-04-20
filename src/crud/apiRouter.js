@@ -7,22 +7,22 @@ Object.keys(models).forEach(modelName => {
   const Model = models[modelName]
   console.log('___________ modelName', modelName)
   // Get all documents for this model
-  router.get(`/${modelName}`, controller.getAll(Model))
+  router.get(`/${modelName}`, controller.getAllRecords(Model))
 
   // Get a single document by ID
-  router.get(`/${modelName}/:id`, controller.getById(Model))
+  router.get(`/${modelName}/:id`, controller.getRecordById(Model))
 
   // Create a new document
-  router.post(`/${modelName}`, controller.create(Model))
+  router.post(`/${modelName}`, controller.createRecord(Model))
 
   // Update an existing document by ID
-  router.put(`/${modelName}/:id`, controller.updateById(Model))
+  router.put(`/${modelName}/:id`, controller.updateRecordById(Model))
 
   // Delete many document by ID
-  router.delete(`/${modelName}`, controller.deleteMany(Model))
+  router.delete(`/${modelName}`, controller.deleteManyRecords(Model))
 
   // Delete a document by ID
-  router.delete(`/${modelName}/:id`, controller.deleteById(Model))
+  router.delete(`/${modelName}/:id`, controller.deleteRecordById(Model))
 })
 
 module.exports = router
