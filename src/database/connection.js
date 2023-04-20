@@ -1,22 +1,20 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const { MONGO_URI } = process.env;
+const { MONGO_URI } = process.env
+
+const config = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}
 
 exports.connect = () => {
   mongoose
-    .connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+    .connect(MONGO_URI, config)
+    .then(res => {
+      console.log('______________database connected Successfully')
     })
-    .then((res) => {
-      console.log(
-        "______________database connected Successfully"
-        // res.connections[0].collections.users
-      );
+    .catch(err => {
+      console.log('__________________database connection failed', err)
+      process.exit(1)
     })
-    .catch((err) => {
-      console.log("__________________database connection failed");
-      console.log(err);
-      process.exit(1);
-    });
-};
+}
