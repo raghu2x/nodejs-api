@@ -1,8 +1,8 @@
 const db = require('./apiDatabase')
-
-const create = async (model, book) => {
+const { getPagination } = require('../utils/helper')
+const create = async (model, record) => {
   try {
-    const createdBook = await db.createRecord(model, book)
+    const createdBook = await db.createRecord(model, record)
     return createdBook
   } catch (error) {
     throw error
@@ -10,37 +10,45 @@ const create = async (model, book) => {
 }
 
 const getAll = async (model, query) => {
+  const { page, size, offset, sortBy, ascending, sortConfig } = getPagination(query)
   try {
-    const data = await db.getAllRecords(model, query)
+    const allRecords = await db.getAllRecords(model, { offset, size, sortConfig })
+    return { page, size, sortBy, ascending, ...allRecords }
+  } catch (error) {
+    throw error
+  }
+}
+
+const getOne = async (model, recordId) => {
+  try {
+    const data = await db.getOneRecord(model, recordId)
     return data
   } catch (error) {
     throw error
   }
 }
 
-const getOne = async (model, bookId) => {
+const updateOne = async (model, recordId, record) => {
   try {
-    const data = await db.getOneRecord(model, bookId)
-    return data
-  } catch (error) {
-    throw error
-  }
-}
-
-const updateOne = async (model, bookId, book) => {
-  try {
-    const updatedData = await db.updateOneRecord(model, bookId, book)
-    console.log('________inside book service', updatedData)
+    const updatedData = await db.updateOneRecord(model, recordId, record)
     return updatedData
   } catch (error) {
     throw error
   }
 }
 
-const deleteOne = async (model, bookId) => {
+const deleteOne = async (model, recordId) => {
   try {
-    const deletedData = await db.deleteOneRecord(model, bookId)
-    return deletedData
+    const deletedRecord = await db.deleteOneRecord(model, recordId)
+    return deletedRecord
+  } catch (error) {
+    throw error
+  }
+}
+const deleteManyRecords = async (model, recordIds) => {
+  try {
+    const deletedRecords = await db.deleteManyRecords(model, recordIds)
+    return deletedRecords
   } catch (error) {
     throw error
   }
@@ -52,4 +60,5 @@ module.exports = {
   updateOne,
   deleteOne,
   create,
+  deleteManyRecords,
 }

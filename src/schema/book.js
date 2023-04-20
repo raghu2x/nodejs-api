@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const { schemaDefault } = require('../utils/defaultSettings')
+
 const bookSchema = new Schema(
   {
     name: {
@@ -12,23 +14,12 @@ const bookSchema = new Schema(
       required: [true, '{PATH} is required'],
     },
     genre: {
-      type: String,
+      ref: 'Genre',
+      type: Schema.Types.ObjectId,
       default: null,
     },
   },
-  {
-    versionKey: false,
-    timestamps: {
-      createdAt: 'publishedOn',
-      updatedAt: 'updatedAt',
-    },
-    toJSON: {
-      virtuals: true,
-      transform: function (doc, ret) {
-        delete ret._id
-      },
-    },
-  }
+  { ...schemaDefault }
 )
 
 bookSchema.virtual('id').get(function () {

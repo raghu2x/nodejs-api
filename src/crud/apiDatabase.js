@@ -1,26 +1,16 @@
 const { createError } = require('../utils/helper')
 
 const getAllRecords = async (model, query = {}) => {
-  const { page = 1, size = 100, sortBy, ascending } = query
-  const offset = (page - 1) * size
-  const isAscending = ascending === 'true'
+  const { offset, size, sortConfig } = query
 
-  const sortFun = () => {
-    if (!sortBy) return {}
-    return { [sortBy]: isAscending ? 1 : -1 }
-  }
   try {
     const allRecords = await model
       .find()
       .skip(offset)
       .limit(size)
-      .sort(sortFun())
-      .populate('author')
+      .sort(sortConfig)
+      .populate('author genre')
     return {
-      size,
-      page,
-      sortBy,
-      ascending: isAscending,
       totalRecords: await model.count(),
       records: allRecords,
     }
@@ -45,11 +35,6 @@ const getOneRecord = async (model, recordId) => {
 
 const createRecord = async (model, record) => {
   try {
-    // let isOldRecord = await model.findOne()
-    // if (isOldRecord) {
-    //   throw `record alredy exist`
-    // }
-    // create record
     const createdRecord = await model.create(record)
     return createdRecord
   } catch (error) {
@@ -59,11 +44,11 @@ const createRecord = async (model, record) => {
 
 const updateOneRecord = async (model, recordId, record) => {
   try {
-    const updatedRecord = await model.findByIdAndUpdate(recordId, record)
+    const updatedRecord = await model.findByIdAndUpdate(recordId, record, { new: true })
     if (!updatedRecord) {
       throw createError(404, recordId)
     }
-    return await model.findById(recordId)
+    return updatedRecord
   } catch (error) {
     throw error
   }
@@ -80,6 +65,14 @@ const deleteOneRecord = async (model, recordId) => {
     throw error
   }
 }
+const deleteManyRecords = async (model, recordIds) => {
+  try {
+    const deletedRecords = await model.deleteMany({ _id: { $in: recordIds } })
+    return deletedRecords
+  } catch (error) {
+    throw error
+  }
+}
 
 module.exports = {
   getAllRecords,
@@ -87,4 +80,5 @@ module.exports = {
   createRecord,
   updateOneRecord,
   deleteOneRecord,
+  deleteManyRecords,
 }
