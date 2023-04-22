@@ -40,6 +40,7 @@ const createRecord = model => async (req, res) => {
     res.status(error.statusCode || 400).send({
       success: false,
       message: error.message || error,
+      errors: error.errors,
     })
   }
 }

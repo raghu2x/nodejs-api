@@ -1,5 +1,5 @@
 const db = require('./apiDatabase')
-const { getPagination } = require('../utils/helper')
+const { getPagination, queryBuilder } = require('../utils/helper')
 const create = async (model, record) => {
   try {
     const createdBook = await db.createRecord(model, record)
@@ -11,8 +11,12 @@ const create = async (model, record) => {
 
 const getAll = async (model, query) => {
   const { page, size, offset, sortBy, ascending, sortConfig } = getPagination(query)
+  const searchQuery = queryBuilder(query.search)
+
+  console.log(searchQuery)
+
   try {
-    const allRecords = await db.getAllRecords(model, { offset, size, sortConfig })
+    const allRecords = await db.getAllRecords(model, { offset, size, sortConfig, searchQuery })
     return { page, size, sortBy, ascending, ...allRecords }
   } catch (error) {
     throw error

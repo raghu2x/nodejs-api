@@ -1,12 +1,20 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const { schemaDefault } = require('../utils/defaultSettings')
-
+const { enums } = require('../data')
 const bookSchema = new Schema(
   {
     name: {
       type: String,
       required: [true, '{PATH} is required'],
+    },
+    status: {
+      type: String,
+      default: 'draft',
+      enum: enums.bookStatus,
+      // message: 'status should be one enums',
+      message: ({ value }) =>
+        `${value} is not a valid role. Allowed values are admin, editor, user.`,
     },
     author: {
       type: Schema.Types.ObjectId,

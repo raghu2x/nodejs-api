@@ -1,57 +1,52 @@
-const bcrypt = require('bcryptjs') // use for password encryption
-const jwt = require('jsonwebtoken') // use for generating auth token
 const User = require('../schema/user') // users schema
+const { generateToken, generateOTP, compare, encrypt } = require('../utils/authUtils')
 
-const { JWT_TOKEN_EXPIRY, JWT_TOKEN } = process.env
+const { sendMail } = require('../services/sendEmail')
+// create account
 
-// generate JWT token
-const generateToken = data => {
-  return jwt.sign(data, JWT_TOKEN, {
-    expiresIn: JWT_TOKEN_EXPIRY,
-  })
+const findUserByEmail = async email => {
+  const user = await User.findOne({ email })
+  if (!user) return false
+
+  return user
 }
 
-// create account
 const createAccount = async (req, res) => {
   const { firstName, lastName, email, password } = req.body
-  let user = new User({
+  const user = new User({
     firstName,
     lastName,
     email,
     password,
   })
   try {
-    console.log('user validation_________')
     await user.validate() //validate schema fields
-    // validate if existing user
-    const oldUser = await User.findOne({ email })
-    console.log('old user check_________')
+    const oldUser = await findUserByEmail(email)
+
     if (oldUser) {
-      throw {
-        message: `email already exist`,
-      }
+      throw new Error('Email already registered')
     }
 
     // encrypt password
-    const encryptedPassword = await bcrypt.hash(req.body.password, 10)
-    console.log('encrypt password end_________')
+    const encryptedPassword = await encrypt(password)
     // create user
-    user = await User.create({
+    const newUser = await User.create({
       firstName,
       lastName,
       email: email.toLowerCase(),
       password: encryptedPassword,
     })
 
-    user.token = generateToken({ user_id: user._id, email })
-    const { password, ...responseUser } = user._doc
+    const token = generateToken({ user_id: newUser._id, email })
+    const { password: userPassword, ...responseUser } = newUser._doc
     res.status(201).send({
       success: true,
-      message: 'account created successfully',
+      message: 'Account created successfully',
       data: responseUser,
+      token: token,
     })
   } catch (error) {
-    console.log('__________ an error')
+    console.error('Error occurred while creating account:', error)
     res.status(error.status || 400).send({ success: false, message: error.message || error })
   }
 }
@@ -60,67 +55,53 @@ const createAccount = async (req, res) => {
 const loginAccount = async (req, res) => {
   const { email, password } = req.body
   try {
-    await new User({ ...req.body }).validate('email') //validate feilds
+    await new User({ ...req.body }).validate('email') //validate fields
     //find user
     const user = await User.findOneAndUpdate({ email }, { lastLog: new Date() }).select('+password')
     if (!user) {
       throw {
-        message: `user not found with email ${email}`,
+        status: 401,
+        message: `User not found with email ${email}`,
       }
     }
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      //set token
-      user.token = generateToken({ user_id: user._id, email })
-      const { password, ...responseUser } = user._doc
-      res.status(200).send({
-        success: true,
-        message: 'login successfull',
-        data: responseUser,
-      })
-    } else {
+    const isPasswordMatch = await compare(password, user.password)
+
+    if (!isPasswordMatch) {
       throw {
-        success: false,
-        message: 'invalid password',
+        status: 401,
+        message: 'Invalid email or password. Please try again.',
       }
     }
+
+    const token = generateToken({ user_id: user._id, email })
+
+    const { password: userPassword, ...responseUser } = user._doc
+
+    res.status(200).send({
+      success: true,
+      message: 'login successfull',
+      data: responseUser,
+      token,
+    })
   } catch (error) {
     res.status(error.status || 400).send({ success: false, message: error.message || error })
-    console.log('____________', error)
   }
 }
 
-const getAllUsers = async (req, res) => {
-  let allUsers = await User.find().populate('books')
-
-  res.status(200).send({
-    success: true,
-    // message: "login successfull",
-    rows: allUsers,
-  })
-}
-
-const getOneUser = async (req, res) => {
+const sendEmail = async (req, res) => {
+  const OTP = generateOTP()
+  const data = { OTP, to: 'raghvendra4077@gmail.com' }
   try {
-    let oneUser = await User.findById(req.params.id).populate('books')
-    // const books = await Book.find({ author: oneUser._id })
-    res.status(200).send({
-      success: true,
-      data: oneUser,
-      // books,
-    })
+    await sendMail(data)
+    res.send({ success: true, message: 'Email send' })
   } catch (error) {
-    res.status(404).send({
-      success: false,
-      message: error.message || error,
-    })
-    console.log('user have error_______________')
+    res.send({ message: error || 'error' })
   }
 }
 
 module.exports = {
   createAccount,
   loginAccount,
-  getAllUsers,
-  getOneUser,
+  sendEmail,
 }
