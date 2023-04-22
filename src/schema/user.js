@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { validate } = require('../utils/validator')
+const { schemaDefault } = require('../utils/defaultSettings')
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -34,21 +35,14 @@ const userSchema = new mongoose.Schema(
       type: Object,
       default: null,
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+
     token: { type: String },
   },
-  {
-    versionKey: false,
-    timestamps: {
-      createdAt: 'createdOn',
-      updatedAt: 'lastLog',
-    },
-    toJSON: {
-      virtuals: true,
-      transform: function (doc, ret) {
-        delete ret._id
-      },
-    },
-  }
+  { ...schemaDefault }
 )
 
 userSchema.virtual('fullName').get(function () {

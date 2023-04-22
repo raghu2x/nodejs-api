@@ -1,17 +1,17 @@
 const { createError } = require('../utils/helper')
 
 const getAllRecords = async (model, query = {}) => {
-  const { offset, size, sortConfig, searchQuery } = query
-  console.log(searchQuery, '____________search query')
+  const { offset, size, sortConfig } = query
+  // console.log(searchQuery, '____________search query')
   try {
     const allRecords = await model
-      .find(searchQuery)
+      .find()
       .skip(offset)
       .limit(size)
       .sort(sortConfig)
       .populate('author genre')
     return {
-      totalRecords: await model.count(searchQuery),
+      totalRecords: await model.count(),
       records: allRecords,
     }
   } catch (error) {
