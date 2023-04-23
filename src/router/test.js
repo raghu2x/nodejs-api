@@ -7,6 +7,13 @@ router.get('/', (req, res) => {
     message: 'hey welcome to our app',
   })
 })
+router.get('/env', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'hey welcome to our app',
+    env: process.env,
+  })
+})
 
 router.all('*', (req, res) => {
   res.status(404).json({

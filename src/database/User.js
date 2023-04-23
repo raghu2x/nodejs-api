@@ -1,6 +1,6 @@
 const User = require('../schema/user')
 const { compare, encrypt } = require('../utils/authUtils')
-
+const { createError } = require('../utils/helper')
 const checkIfEmailExists = async email => {
   const existingUser = await User.findOne({ email }).select('+password')
   if (existingUser) return existingUser
