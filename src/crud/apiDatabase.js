@@ -2,7 +2,6 @@ const { createError } = require('../utils/helper')
 
 const getAllRecords = async (model, query = {}) => {
   const { offset, size, sortConfig, searchQuery } = query
-  // console.log(searchQuery, '____________search query')
   try {
     const allRecords = await model
       .find(searchQuery)
@@ -22,7 +21,7 @@ const getAllRecords = async (model, query = {}) => {
 
 const getOneRecord = async (model, recordId) => {
   try {
-    const oneRecord = await model.findById(recordId)
+    const oneRecord = await model.findOne({ _id: recordId })
     if (!oneRecord) {
       throw createError(404, recordId)
     }

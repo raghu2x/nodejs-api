@@ -13,10 +13,11 @@ const sendMail = async params => {
       subject: 'Hello ✔',
       html: html,
     })
+    console.log('_______________email send', info)
     return info
   } catch (error) {
     console.log('_______________email not send')
-    throw error
+    throw new Error('unable to send mail', error, MAIL_SETTINGS)
   }
 }
 
