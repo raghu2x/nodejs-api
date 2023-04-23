@@ -7,7 +7,7 @@
     "handlebars": "^4.7.7",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.12.1",
-    "mongoose": "^6.8.0",
+    "mongoose": "^6.10.5",
     "nodemailer": "^6.9.1",
     "uuid": "^9.0.0"
   },

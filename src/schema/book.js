@@ -26,6 +26,10 @@ const bookSchema = new Schema(
       type: Schema.Types.ObjectId,
       default: null,
     },
+    likes: {
+      type: Number,
+      default: 0,
+    },
   },
   { ...schemaDefault }
 )
