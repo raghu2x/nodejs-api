@@ -1,5 +1,5 @@
 const User = require('../schema/user') // users schema
-const { generateToken, compare } = require('../utils/authUtils')
+const { generateToken, compare, getResetToken } = require('../utils/authUtils')
 const { saveOTP, verifyOTP } = require('./otpService')
 const { sendMail } = require('../services/sendEmail')
 const userDB = require('../database/User')
@@ -40,7 +40,7 @@ const loginUser = async ({ email, password }) => {
   }
 }
 
-const verifyAccount = async ({ email, otp }) => {
+const verifyAccount = async ({ email, code }) => {
   try {
     // verify if account is already verified
     const existingUser = await userDB.checkIfEmailExists(email)
@@ -48,23 +48,50 @@ const verifyAccount = async ({ email, otp }) => {
     if (existingUser.verified) throw createError('alreadyVerified', null, 200)
 
     // check if otp is not present than send
-    if (otp === undefined) {
-      const { otp, auth } = await saveOTP({ email })
-      await sendOTP({ otp, email: auth })
+    if (code === undefined) {
+      const { code: otp, email: userEmail } = await saveOTP({ email })
+      await sendOTP({ otp, email: userEmail })
       return { message: 'OTP sent successfully' }
     }
 
     // verify otp here
-    await verifyOTP({ email, otp })
-    const user = await User.findOneAndUpdate({ email }, { verified: true })
+    await verifyOTP({ email, code })
+    // TODO: take this code to data access layer
+    const user = await User.findOneAndUpdate({ email }, { verified: true }, { new: true })
     return { message: 'Account verified', data: user }
   } catch (error) {
     console.error('Error verifying account:', error)
     throw error
   }
 }
+
+const forgotPassword = async ({ email }) => {
+  try {
+    const existingUser = await userDB.checkIfEmailExists(email)
+    if (!existingUser) throw createError('accountNotExist', null, 401)
+
+    const { code } = await saveOTP({ email, type: 'resetToken' })
+    await sendOTP({ otp: code, email })
+    return true
+  } catch (error) {
+    throw error
+  }
+}
+
+const resetPassword = async ({ email, password, token }) => {
+  try {
+    await verifyOTP({ email, code: token, type: 'resetToken' })
+    const user = await userDB.updateUser({ email, password })
+    return { message: 'password reset success', data: user }
+  } catch (error) {
+    throw error
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
   verifyAccount,
+  forgotPassword,
+  resetPassword,
 }

@@ -1,32 +1,41 @@
 const otpModel = require('../schema/otp') // users schema
-const { generateOTP } = require('../utils/authUtils')
+const { generateOTP, getResetToken } = require('../utils/authUtils')
+const { createError } = require('../utils/helper')
 
-const saveOTP = async ({ email }) => {
+const checkIfOtpExists = async (email, type) => {
+  const otpExist = await otpModel.findOne({ email, type })
+  if (otpExist) return otpExist
+  return null
+}
+
+/**
+ *
+ * @param {string} email user email
+ * @param {string} type ['otp','resetToken'] otp for varification resetToken for password reset
+ * @returns generated code
+ */
+const saveOTP = async ({ email, type = 'otp' }) => {
   try {
-    const otp = generateOTP()
-    const otpExpiry = new Date()
+    const existingOtp = await checkIfOtpExists(email, type)
+    if (existingOtp) return existingOtp
 
-    const newOtp = await otpModel.create({
-      otp,
-      otpExpiry,
-      auth: email,
-    })
+    const code = type == 'otp' ? generateOTP() : getResetToken()
+
+    const newOtp = await otpModel.create({ code, email, type })
+    console.log('otp not exist__________', newOtp)
     return newOtp
   } catch (error) {
-    throw new Error('Error in OTP create')
+    throw error
   }
 }
 
-const verifyOTP = async ({ email, otp }) => {
+const verifyOTP = async ({ email, code, type = 'otp' }) => {
   try {
-    const data = await otpModel.findOne({ auth: email })
-    if (!data) {
-      throw new Error('Email not found in database')
-    }
-    if (data.otp !== otp) {
-      console.log(data.otp, otp, '________________________')
-      throw new Error('Invalid OTP')
-    }
+    const existingOtp = await checkIfOtpExists(email, type)
+    if (!existingOtp) throw new Error(`${type} expired`)
+    console.log(existingOtp.code, code, '__________')
+    if (existingOtp.code !== code) throw createError('invalidOtp', null, 401)
+
     // OTP is verified
     return true
   } catch (error) {

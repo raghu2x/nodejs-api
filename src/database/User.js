@@ -43,8 +43,25 @@ const loginUser = async ({ email, password }) => {
   }
 }
 
+const updateUser = async ({ email, ...restdata }) => {
+  const payload = { ...restdata }
+  try {
+    if (payload.password) {
+      payload.password = await encrypt(payload.password)
+    }
+    const user = await User.findOneAndUpdate({ email }, payload, { new: true })
+    if (!user) throw createError('emailNotExist', email, 401)
+
+    const { password: userPassword, ...responseUser } = user._doc
+    return responseUser
+  } catch (error) {
+    throw error
+  }
+}
+
 module.exports = {
   createAccount,
   checkIfEmailExists,
   loginUser,
+  updateUser,
 }
