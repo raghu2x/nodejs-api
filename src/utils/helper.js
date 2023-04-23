@@ -5,6 +5,8 @@ const errorMessages = {
   InvalidCred: 'Invalid email or password. Please try again.',
   accountNotExist: 'Account not Exist',
   alreadyVerified: 'Account already verified',
+  invalidOtp: 'Invalid OTP',
+  resetTokenExpired: 'reset password link expired.',
 }
 
 const createError = (msgKey, param, statusCode = 400) => {

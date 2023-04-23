@@ -44,9 +44,14 @@ const compare = async (plaintext, hash) => {
   return isSame
 }
 
+const getResetToken = (length = 20, type = 'hex') => {
+  const token = crypto.randomBytes(length).toString(type)
+  return token
+}
 module.exports = {
   generateToken,
   generateOTP,
   encrypt,
   compare,
+  getResetToken,
 }

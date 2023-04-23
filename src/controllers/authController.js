@@ -41,9 +41,28 @@ const sendEmail = async (req, res, next) => {
 }
 
 const verifyAccount = async (req, res, next) => {
-  const { otp, email } = req.body
+  const { code, email } = req.body
   try {
-    const data = await userService.verifyAccount({ otp, email })
+    const data = await userService.verifyAccount({ code, email })
+    res.send({ success: true, ...data })
+  } catch (error) {
+    next(error)
+  }
+}
+const forgotPassword = async (req, res, next) => {
+  const { email } = req.body
+  try {
+    const data = await userService.forgotPassword({ email })
+    res.send({ success: true, message: 'Check your email to reset your password' })
+  } catch (error) {
+    next(error)
+  }
+}
+const resetPassword = async (req, res, next) => {
+  const { token } = req.params
+  const { password, email } = req.body
+  try {
+    const data = await userService.resetPassword({ password, token, email })
     res.send({ success: true, ...data })
   } catch (error) {
     next(error)
@@ -55,4 +74,6 @@ module.exports = {
   loginAccount,
   sendEmail,
   verifyAccount,
+  forgotPassword,
+  resetPassword,
 }
