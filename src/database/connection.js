@@ -1,15 +1,11 @@
 const mongoose = require('mongoose')
+const { DB_CONFIG } = require('../config')
 
-const { MONGO_URI } = process.env
-
-const config = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}
+mongoose.set('strictQuery', false)
 
 exports.connect = () => {
   mongoose
-    .connect(MONGO_URI, config)
+    .connect(process.env.MONGO_URI, DB_CONFIG)
     .then(res => {
       console.log('______________database connected Successfully')
     })
