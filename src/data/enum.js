@@ -9,7 +9,20 @@ const genders = Object.freeze({
   OTHER: 'other',
 })
 
+const bloodGroups = Object.freeze({
+  O_POS: 'O+',
+  O_NEG: 'O-',
+  A_POS: 'A+',
+  A_NEG: 'A-',
+  B_POS: 'B+',
+  B_NEG: 'B-',
+  B_NEG: 'B-',
+  AB_POS: 'AB+',
+  AB_NEG: 'AB-',
+})
+
 module.exports = {
   bookStatus,
   genders,
+  bloodGroups,
 }

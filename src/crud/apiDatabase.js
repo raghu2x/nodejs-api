@@ -1,16 +1,16 @@
 const { createError } = require('../utils/helper')
 
-const getAllRecords = async (model, query = {}) => {
+const getAllRecords = async (model, userId, query = {}) => {
   const { offset, size, sortConfig, searchQuery } = query
   try {
     const allRecords = await model
-      .find(searchQuery)
+      .find({ userId, ...searchQuery })
       .skip(offset)
       .limit(size)
       .sort(sortConfig)
       .populate('author genre')
     return {
-      totalRecords: await model.count(searchQuery),
+      totalRecords: await model.count({ userId, ...searchQuery }),
       records: allRecords,
     }
   } catch (error) {
@@ -19,9 +19,9 @@ const getAllRecords = async (model, query = {}) => {
   }
 }
 
-const getOneRecord = async (model, recordId) => {
+const getOneRecord = async (model, userId, recordId) => {
   try {
-    const oneRecord = await model.findOne({ _id: recordId })
+    const oneRecord = await model.findOne({ userId, _id: recordId })
     if (!oneRecord) {
       throw createError(404, recordId)
     }
@@ -32,18 +32,20 @@ const getOneRecord = async (model, recordId) => {
   }
 }
 
-const createRecord = async (model, record) => {
+const createRecord = async (model, userId, record) => {
   try {
-    const createdRecord = await model.create(record)
+    const createdRecord = await model.create({ ...record, userId })
     return createdRecord
   } catch (error) {
     throw error
   }
 }
 
-const updateOneRecord = async (model, recordId, record) => {
+const updateOneRecord = async (model, userId, recordId, record) => {
   try {
-    const updatedRecord = await model.findByIdAndUpdate(recordId, record, { new: true })
+    const updatedRecord = await model.findOneAndUpdate({ userId, _id: recordId }, record, {
+      new: true,
+    })
     if (!updatedRecord) {
       throw createError(404, recordId)
     }
@@ -53,9 +55,9 @@ const updateOneRecord = async (model, recordId, record) => {
   }
 }
 
-const deleteOneRecord = async (model, recordId) => {
+const deleteOneRecord = async (model, userId, recordId) => {
   try {
-    const deletedRecord = await model.findByIdAndDelete(recordId)
+    const deletedRecord = await model.findOneDelete({ userId, _id: recordId })
     if (!deletedRecord) {
       throw createError(404, recordId)
     }
@@ -64,9 +66,9 @@ const deleteOneRecord = async (model, recordId) => {
     throw error
   }
 }
-const deleteManyRecords = async (model, recordIds) => {
+const deleteManyRecords = async (model, userId, recordIds) => {
   try {
-    const deletedRecords = await model.deleteMany({ _id: { $in: recordIds } })
+    const deletedRecords = await model.deleteMany({ userId, _id: { $in: recordIds } })
     return deletedRecords
   } catch (error) {
     throw error

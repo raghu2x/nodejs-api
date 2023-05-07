@@ -1,11 +1,11 @@
 const router = require('express').Router()
-const models = require('./models')
+const models = require('../schema')
 const controller = require('./apiController')
 
 // Create dynamic routes for each Mongoose model
 Object.keys(models).forEach(modelName => {
   const Model = models[modelName]
-  console.log('___________ modelName', modelName)
+  console.log('___________ api_endpoint:', modelName)
   // Get all documents for this model
   router.get(`/${modelName}`, controller.getAllRecords(Model))
 
