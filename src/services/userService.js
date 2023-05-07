@@ -11,7 +11,7 @@ const sendOTP = async ({ email, otp }) => {
     const mailData = await sendMail(data)
     return mailData
   } catch (error) {
-    throw new Error('Unable to send OTP')
+    throw error
   }
 }
 
@@ -20,8 +20,8 @@ const createUser = async ({ firstName, lastName, email, password }) => {
     const user = await userDB.createAccount({ firstName, lastName, email, password })
 
     //  send OTP
-    const { otp, auth } = await saveOTP({ email })
-    await sendOTP({ otp, email: auth })
+    const { code: otp, email: userEamil } = await saveOTP({ email })
+    await sendOTP({ otp, email: userEamil })
 
     return user
   } catch (error) {

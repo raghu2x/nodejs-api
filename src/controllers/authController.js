@@ -10,8 +10,8 @@ const createAccount = async (req, res, next) => {
     const data = await userService.createUser({ firstName, lastName, email, password, address })
     res.status(201).send({
       success: true,
-      message: 'account created verify your email to continue',
-      data,
+      message: 'Please verify your email to continue.',
+      // data,
     })
   } catch (error) {
     next(error)
