@@ -16,7 +16,7 @@
   "description": "node.js app for creating rest api",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "raghvendra",

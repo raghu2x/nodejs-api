@@ -2,8 +2,14 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const { schemaDefault } = require('../utils/defaultSettings')
 const { enums } = require('../data')
+
 const bookSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    },
     name: {
       type: String,
       required: [true, '{PATH} is required'],

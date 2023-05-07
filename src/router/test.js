@@ -7,6 +7,7 @@ router.get('/', (req, res) => {
     message: 'hey welcome to our app',
   })
 })
+
 router.get('/env', (req, res) => {
   res.status(200).json({
     success: true,
@@ -15,10 +16,11 @@ router.get('/env', (req, res) => {
   })
 })
 
-router.all('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Requested endpoint doesn't exist or method not allowed!",
+router.get('/api/endpoints', (req, res) => {
+  console.log(req.user, '___________user')
+  res.send({
+    success: true,
+    data: Object.keys(models),
   })
 })
 
