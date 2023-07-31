@@ -1,4 +1,15 @@
 {
+  "name": "node-api",
+  "version": "1.0.0",
+  "description": "node.js app for creating rest api",
+  "author": "raghvendra",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --fix ./*.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "crypto": "^1.0.1",
@@ -11,14 +22,9 @@
     "nodemailer": "^6.9.1",
     "uuid": "^9.0.0"
   },
-  "name": "node-api",
-  "version": "1.0.0",
-  "description": "node.js app for creating rest api",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "raghvendra",
-  "license": "ISC"
+  "devDependencies": {
+    "eslint": "^8.41.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5"
+  }
 }
