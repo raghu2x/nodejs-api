@@ -1,79 +1,72 @@
-const { createError } = require('../utils/helper')
+const { createError } = require('../utils/helper');
 
 const getAllRecords = async (model, userId, query = {}) => {
-  const { offset, size, sortConfig, searchQuery } = query
+  const {
+    offset, size, sortConfig, searchQuery,
+  } = query;
   try {
     const allRecords = await model
       .find({ userId, ...searchQuery })
       .skip(offset)
       .limit(size)
       .sort(sortConfig)
-      .populate('author genre')
+      .populate('author genre');
     return {
       totalRecords: await model.count({ userId, ...searchQuery }),
       records: allRecords,
-    }
+    };
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
-}
+};
 
 const getOneRecord = async (model, userId, recordId) => {
   try {
-    const oneRecord = await model.findOne({ userId, _id: recordId })
+    const oneRecord = await model.findOne({ userId, _id: recordId });
     if (!oneRecord) {
-      throw createError(404, recordId)
+      throw createError(404, recordId);
     }
-    return oneRecord
+    return oneRecord;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
-}
+};
 
 const createRecord = async (model, userId, record) => {
-  try {
-    const createdRecord = await model.create({ ...record, userId })
-    return createdRecord
-  } catch (error) {
-    throw error
-  }
-}
+  const createdRecord = await model.create({ ...record, userId });
+  return createdRecord;
+};
 
 const updateOneRecord = async (model, userId, recordId, record) => {
-  try {
-    const updatedRecord = await model.findOneAndUpdate({ userId, _id: recordId }, record, {
+  const updatedRecord = await model.findOneAndUpdate(
+    { userId, _id: recordId },
+    record,
+    {
       new: true,
-    })
-    if (!updatedRecord) {
-      throw createError(404, recordId)
-    }
-    return updatedRecord
-  } catch (error) {
-    throw error
+    },
+  );
+  if (!updatedRecord) {
+    throw createError(404, recordId);
   }
-}
+  return updatedRecord;
+};
 
 const deleteOneRecord = async (model, userId, recordId) => {
-  try {
-    const deletedRecord = await model.findOneDelete({ userId, _id: recordId })
-    if (!deletedRecord) {
-      throw createError(404, recordId)
-    }
-    return deletedRecord
-  } catch (error) {
-    throw error
+  const deletedRecord = await model.findOneDelete({ userId, _id: recordId });
+  if (!deletedRecord) {
+    throw createError(404, recordId);
   }
-}
+  return deletedRecord;
+};
 const deleteManyRecords = async (model, userId, recordIds) => {
-  try {
-    const deletedRecords = await model.deleteMany({ userId, _id: { $in: recordIds } })
-    return deletedRecords
-  } catch (error) {
-    throw error
-  }
-}
+  const deletedRecords = await model.deleteMany({
+    userId,
+    _id: { $in: recordIds },
+  });
+  return deletedRecords;
+};
 
 module.exports = {
   getAllRecords,
@@ -82,4 +75,4 @@ module.exports = {
   updateOneRecord,
   deleteOneRecord,
   deleteManyRecords,
-}
+};

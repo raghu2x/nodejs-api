@@ -1,4 +1,5 @@
-const app = require("./src/app");
+const app = require('./src/app');
+
 const { API_PORT, PORT } = process.env;
 
 app.listen(PORT || API_PORT, () => {
