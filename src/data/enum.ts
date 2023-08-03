@@ -1,12 +1,12 @@
 const bookStatus = Object.freeze({
   ACTIVE: 'draft',
-  INACTIVE: 'published',
+  INACTIVE: 'published'
 })
 
 const genders = Object.freeze({
   MALE: 'male',
   FEMALE: 'female',
-  OTHER: 'other',
+  OTHER: 'other'
 })
 
 const bloodGroups = Object.freeze({
@@ -16,13 +16,12 @@ const bloodGroups = Object.freeze({
   A_NEG: 'A-',
   B_POS: 'B+',
   B_NEG: 'B-',
-  B_NEG: 'B-',
   AB_POS: 'AB+',
-  AB_NEG: 'AB-',
+  AB_NEG: 'AB-'
 })
 
-module.exports = {
+export default {
   bookStatus,
   genders,
-  bloodGroups,
+  bloodGroups
 }

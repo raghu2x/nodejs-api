@@ -4,13 +4,15 @@ module.exports = {
     commonjs: true,
     es2021: true,
   },
-  extends: 'airbnb-base',
-  overrides: [],
+  extends: [
+    'standard-with-typescript',
+    // '"plugin:@typescript-eslint/recommended"',
+  ],
   parserOptions: {
     ecmaVersion: 'latest',
+    project: './tsconfig.json',
   },
   rules: {
-    camelcase: 0,
-    'linebreak-style': 0,
+    'no-console': 'warn',
   },
-};
+}
