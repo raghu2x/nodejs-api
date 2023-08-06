@@ -27,6 +27,17 @@ const generateToken = (payload: TokenData): string => {
 }
 
 /**
+ * @deprecated
+ * This function is used to verify JWT Token but it's not in use
+ * @param token token for varification
+ * @returns
+ */
+const verifyJwtToken = (token: string): jwt.JwtPayload | string => {
+  const jwtToken: jwt.Secret = process.env.JWT_TOKEN ?? ''
+  return jwt.verify(token, jwtToken)
+}
+
+/**
  * Encrypts a given value using bcrypt
  * @param {string} value - The value to encrypt
  * @param {number} [length=10] - The number of rounds of encryption to use (default: 10)
@@ -53,4 +64,4 @@ const getResetToken = (length: number = 20, type: BufferEncoding = 'hex'): strin
   return token
 }
 
-export { generateToken, generateOTP, encrypt, compare, getResetToken }
+export { generateToken, verifyJwtToken, generateOTP, encrypt, compare, getResetToken }
