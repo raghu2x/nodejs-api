@@ -14,6 +14,10 @@ module.exports = {
   },
   rules: {
     'no-console': 'warn',
-    '@typescript-eslint/space-before-function-paren': 'off'
+    '@typescript-eslint/space-before-function-paren': 'off',
+
+    // import rules
+    'import/first': 'error',
+    'import/newline-after-import': 'error'
   }
 }

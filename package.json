@@ -8,7 +8,8 @@
   "scripts": {
     "start": "nodemon",
     "build": "npx tsc",
-    "lint": "eslint --fix ./*.js"
+    "lint": "eslint ./*.js",
+    "lint:fix": "eslint --fix ./*.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
