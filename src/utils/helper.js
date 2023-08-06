@@ -6,14 +6,14 @@ const errorMessages = {
   accountNotExist: 'Account not Exist',
   alreadyVerified: 'Account already verified',
   invalidOtp: 'Invalid OTP',
-  resetTokenExpired: 'reset password link expired.',
+  resetTokenExpired: 'reset password link expired.'
 }
 
 const createError = (msgKey, param, statusCode = 400) => {
   const errorMessage = errorMessages[msgKey]
 
   const error = new Error(errorMessage.replace('{{param}}', param))
-  error.statusCode = statusCode
+  // error.statusCode = statusCode
   return error
 }
 
@@ -52,7 +52,7 @@ const getQuery = (q = '') => {
 }
 
 const queryBuilder = (query = []) => {
-  const q = query.map(element => {
+  const q = query.map((element) => {
     const [field, queryType, searchTerm] = element.split(' ')
     if (queryType === 'gt' || queryType === 'gte' || queryType === 'lt' || queryType === 'lte') {
       const existingQuery = getQuery(`${field} ${queryType} ${searchTerm}`)

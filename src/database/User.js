@@ -1,7 +1,7 @@
 const User = require('../schema/user')
 const { compare, encrypt } = require('../utils/authUtils')
 const { createError } = require('../utils/helper')
-const checkIfEmailExists = async email => {
+const checkIfEmailExists = async (email) => {
   const existingUser = await User.findOne({ email }).select('+password')
   if (existingUser) return existingUser
   return null
@@ -17,7 +17,7 @@ const createAccount = async ({ firstName, lastName, email, password }) => {
       firstName,
       lastName,
       email,
-      password: encryptedPassword,
+      password: encryptedPassword
     })
     const { password: userPassword, ...responseUser } = createdUser
 
@@ -39,6 +39,7 @@ const loginUser = async ({ email, password }) => {
     const { password: userPassword, ...responseUser } = user._doc
     return responseUser
   } catch (error) {
+    console.log('user issue')
     throw error
   }
 }
@@ -63,5 +64,5 @@ module.exports = {
   createAccount,
   checkIfEmailExists,
   loginUser,
-  updateUser,
+  updateUser
 }
