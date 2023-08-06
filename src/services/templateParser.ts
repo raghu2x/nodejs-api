@@ -1,12 +1,13 @@
-const hbs = require('handlebars')
-const fs = require('fs')
-const path = require('path')
+import hbs from 'handlebars'
+import fs from 'fs'
+import path from 'path'
 
 const templatesDir = path.join(__dirname, '..', 'templates')
 
-const compileTemplate = (fileName, data) => {
+export const compileTemplate = (fileName: string, data: any): string => {
   const htmlFilePath = path.join(templatesDir, fileName)
   const template = fs.readFileSync(htmlFilePath, 'utf8')
+
   // compile the template using handlebars
   const compiledTemplate = hbs.compile(template)
 
@@ -14,5 +15,3 @@ const compileTemplate = (fileName, data) => {
   const html = compiledTemplate(data)
   return html
 }
-
-module.exports = { compileTemplate }

@@ -1,4 +1,3 @@
-// app.ts
 import express from 'express'
 import { config } from 'dotenv'
 import { connect } from './database/connection'
