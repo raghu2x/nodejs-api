@@ -52,7 +52,7 @@ const getQuery = (q = '') => {
 }
 
 const queryBuilder = (query = []) => {
-  const q = query.map((element) => {
+  const q = query.map(element => {
     const [field, queryType, searchTerm] = element.split(' ')
     if (queryType === 'gt' || queryType === 'gte' || queryType === 'lt' || queryType === 'lte') {
       const existingQuery = getQuery(`${field} ${queryType} ${searchTerm}`)
