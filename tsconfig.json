@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "noEmit": true,
+    // "types": ["node", "dotenv"],
+    "noEmit": true, // enable to genrate compiled js file in outDir
     "target": "ES6",
     "module": "commonjs",
     "outDir": "./dist",
@@ -8,10 +9,9 @@
     // "strict": true,
     "esModuleInterop": true,
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "noImplicitAny": false,
     "strictNullChecks": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["**/*.js"]
+  "include": ["src/**/*.ts"]
 }
