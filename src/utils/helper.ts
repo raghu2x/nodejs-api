@@ -1,4 +1,15 @@
-const errorMessages = {
+interface ErrorMessages {
+  404: string
+  emailNotExist: string
+  notVerified: string
+  InvalidCred: string
+  accountNotExist: string
+  alreadyVerified: string
+  invalidOtp: string
+  resetTokenExpired: string
+}
+
+const errorMessages: ErrorMessages = {
   404: 'Record not found for id: {{param}}',
   emailNotExist: 'User not found with email {{param}}',
   notVerified: 'Account is not verified',
@@ -9,25 +20,46 @@ const errorMessages = {
   resetTokenExpired: 'reset password link expired.'
 }
 
-const createError = (msgKey, param, statusCode = 400) => {
-  const errorMessage = errorMessages[msgKey]
+type ErrorMessageKey = keyof ErrorMessages
 
+const createError = (msgKey: ErrorMessageKey, param: string, statusCode: number = 400): Error => {
+  const errorMessage = errorMessages[msgKey]
   const error = new Error(errorMessage.replace('{{param}}', param))
-  // error.statusCode = statusCode
+  // error.statusCode = statusCode // You can add a custom property to Error type if needed.
   return error
 }
 
-const getPagination = (query = {}) => {
+interface PaginationQuery {
+  page?: number
+  size?: number
+  sortBy?: string
+  ascending?: boolean | string
+}
+
+interface PaginationConfig {
+  page: number
+  size: number
+  sortBy: string
+  sortConfig: Record<string, 1 | -1>
+  offset: number
+  ascending: boolean
+}
+
+const getPagination = (query: PaginationQuery = {}): PaginationConfig => {
   const { page = 1, size = 100, sortBy = '', ascending = true } = query
   const offset = (page - 1) * size
   const isAscending = ascending === 'true' || ascending === true
-  let sortConfig = {}
-  if (sortBy) sortConfig = { [sortBy]: isAscending ? 1 : -1 }
+  const sortConfig: Record<string, 1 | -1> = {}
+  if (sortBy !== undefined && sortBy !== '') sortConfig[sortBy] = isAscending ? 1 : -1
 
   return { page, size, sortBy, sortConfig, offset, ascending: isAscending }
 }
 
-const getQuery = (q = '') => {
+// type QueryType = 'like' | 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte'
+
+type QueryObject = Record<string, any>
+
+const getQuery = (q: string = ''): QueryObject => {
   const [field, queryType, searchTerm] = q.split(' ')
 
   const regex = new RegExp(searchTerm, 'i')
@@ -51,7 +83,7 @@ const getQuery = (q = '') => {
   }
 }
 
-const queryBuilder = (query = []) => {
+const queryBuilder = (query: string[] = []): QueryObject => {
   const q = query.map(element => {
     const [field, queryType, searchTerm] = element.split(' ')
     if (queryType === 'gt' || queryType === 'gte' || queryType === 'lt' || queryType === 'lte') {
@@ -64,4 +96,4 @@ const queryBuilder = (query = []) => {
   return { $or: q }
 }
 
-module.exports = { createError, getPagination, queryBuilder }
+export { createError, getPagination, queryBuilder }

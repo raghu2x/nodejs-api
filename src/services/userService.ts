@@ -43,8 +43,8 @@ const verifyAccount = async ({ email, code }: VerificationData): Promise<any> =>
   try {
     // verify if account is already verified
     const existingUser = await userDB.checkIfEmailExists(email)
-    if (existingUser == null) throw createError('accountNotExist', null, 401)
-    if (existingUser.verified) throw createError('alreadyVerified', null, 200)
+    if (existingUser == null) throw createError('accountNotExist', '', 401)
+    if (existingUser.verified) throw createError('alreadyVerified', '', 200)
 
     // check if otp is not present than send
     if (code === undefined) {
@@ -66,7 +66,7 @@ const verifyAccount = async ({ email, code }: VerificationData): Promise<any> =>
 
 const forgotPassword = async ({ email }): Promise<any> => {
   const existingUser = await userDB.checkIfEmailExists(email)
-  if (existingUser == null) throw createError('accountNotExist', null, 401)
+  if (existingUser == null) throw createError('accountNotExist', '', 401)
 
   const { code } = await saveOTP({ email, type: 'resetToken' })
   await sendOTP({ otp: code, email })
