@@ -2,7 +2,7 @@ import mongoose, { type Schema, type Document, type Model, type Types } from 'mo
 import { validate } from '../utils/validator'
 import { schemaDefault } from '../utils/defaultSettings'
 
-interface User extends Document {
+export interface UserType extends Document {
   firstName: string
   lastName: string
   email: string
@@ -14,7 +14,7 @@ interface User extends Document {
   books: Types.Array<Schema.Types.ObjectId>
 }
 
-const userSchema: Schema<User> = new mongoose.Schema(
+const userSchema: Schema<UserType> = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -63,11 +63,11 @@ const userSchema: Schema<User> = new mongoose.Schema(
   { ...schemaDefault }
 )
 
-userSchema.virtual('fullName').get(function (this: User) {
+userSchema.virtual('fullName').get(function (this: UserType) {
   return `${this.firstName} ${this.lastName}`
 })
 
-userSchema.virtual('id').get(function (this: User) {
+userSchema.virtual('id').get(function (this: UserType) {
   return this._id.toHexString()
 })
 
@@ -78,6 +78,6 @@ userSchema.virtual('books', {
   justOne: false
 })
 
-const UserModel: Model<User> = mongoose.model<User>('user', userSchema)
+const UserModel: Model<UserType> = mongoose.model<UserType>('user', userSchema)
 
 export default UserModel
