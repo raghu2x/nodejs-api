@@ -16,14 +16,15 @@ const generateOTP = (otpLength: number = 6): number => {
 
 type TokenData = object | string | Buffer
 // generate JWT token
-const generateToken = (payload: TokenData): string => {
+const generateToken = (payload: TokenData, options: jwt.SignOptions): string => {
   const jwtToken: jwt.Secret = process.env.JWT_TOKEN ?? ''
 
-  const options: jwt.SignOptions = {
-    expiresIn: process.env.JWT_TOKEN_EXPIRY
+  const opt: jwt.SignOptions = {
+    expiresIn: process.env.JWT_TOKEN_EXPIRY,
+    ...options
   }
 
-  return jwt.sign(payload, jwtToken, options)
+  return jwt.sign(payload, jwtToken, opt)
 }
 
 /**

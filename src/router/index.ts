@@ -6,9 +6,9 @@ import crudRouter from '../crud/apiRouter'
 
 const router: Router = Router()
 
+router.use('/', routes)
 router.use('/api/auth', authRouter)
 router.use('/api', auth, crudRouter)
-router.use('/', routes)
 
 router.all('*', (req: Request, res: Response) => {
   res.status(404).json({
