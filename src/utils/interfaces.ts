@@ -1,8 +1,11 @@
 import type { Request } from 'express'
 import type { JwtPayload } from 'jsonwebtoken'
 
+interface AuthenticatedUser extends JwtPayload {
+  userId: string
+}
 export interface AuthenticatedRequest extends Request {
-  user?: JwtPayload // Use union type to make it flexible
+  user: AuthenticatedUser // Use union type to make it flexible
 }
 
 export interface UserRegistrationData {
