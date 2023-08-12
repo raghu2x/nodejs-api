@@ -4,10 +4,8 @@ import { type Model } from 'mongoose' // Replace with the actual import
 import { type DeleteResult } from 'mongodb'
 
 interface AllRecords extends PaginationQuery {
-  data: {
-    totalRecords: number
-    records: any[]
-  }
+  totalRecords: number
+  records: any[]
 }
 
 const create = async (model: Model<any>, userId: string, record: any): Promise<any> => {
@@ -25,7 +23,7 @@ const getAll = async (model: Model<any>, userId: string, query: any): Promise<Al
     sortConfig,
     searchQuery
   })
-  return { page, size, sortBy, ascending, data: allRecords }
+  return { page, size, sortBy, ascending, ...allRecords }
 }
 
 const getOne = async (model: Model<any>, userId: string, recordId: string): Promise<any> => {

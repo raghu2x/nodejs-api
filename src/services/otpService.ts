@@ -30,7 +30,7 @@ const verifyOTP = async ({ email, code, type = 'otp' }: OtpData): Promise<boolea
     const existingOtp = await checkIfOtpExists(email, type)
     if (existingOtp === false) throw new Error(`${type} expired`)
     console.log(existingOtp.code, code, '__________')
-    if (existingOtp.code !== code) throw createError('invalidOtp', null, 401)
+    if (existingOtp.code !== code) throw createError('invalidOtp', '', 401)
 
     // OTP is verified
     return true
