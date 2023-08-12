@@ -3,3 +3,4 @@ package-lock.json
 .eslintrc.js
 
 /dist
+*.js

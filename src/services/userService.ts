@@ -34,7 +34,7 @@ const createUser = async ({
 
 const loginUser = async ({ email, password }: LoginData): Promise<any> => {
   const user = await userDB.loginUser({ email, password })
-  const token = generateToken({ user_id: user._id, email })
+  const token = generateToken({ userId: user._id, email })
   console.log('login ________________')
   return { ...user, token }
 }

@@ -29,7 +29,7 @@ const createError = (msgKey: ErrorMessageKey, param: string, statusCode: number 
   return error
 }
 
-interface PaginationQuery {
+export interface PaginationQuery {
   page?: number
   size?: number
   sortBy?: string
