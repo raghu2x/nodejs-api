@@ -1,6 +1,6 @@
 import type { Response, NextFunction } from 'express'
 import * as jwt from 'jsonwebtoken'
-import { type AuthenticatedRequest } from '../utils/interfaces'
+import { type AuthenticatedRequest, type AuthenticatedUser } from '../utils/interfaces'
 
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const { JWT_TOKEN, HEADER_TOKEN_KEY } = process.env
@@ -11,7 +11,7 @@ const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunctio
 
   if (token !== undefined && typeof token === 'string') {
     try {
-      const user = jwt.verify(token, JWT_TOKEN ?? '') as jwt.JwtPayload
+      const user = jwt.verify(token, JWT_TOKEN ?? '') as AuthenticatedUser
       req.user = user
       next()
     } catch (error) {
