@@ -10,6 +10,7 @@ import type {
   UserRegistrationData,
   LoginData
 } from '../utils/interfaces'
+import { type SignOptions } from 'jsonwebtoken'
 
 const sendOTP = async ({ email, otp }: VerificationData): Promise<any> => {
   const data = { otp, to: email }
@@ -32,9 +33,14 @@ const createUser = async ({
   return user
 }
 
-const loginUser = async ({ email, password }: LoginData): Promise<any> => {
+const loginUser = async ({ email, password, remember }: LoginData): Promise<any> => {
   const user = await userDB.loginUser({ email, password })
-  const token = generateToken({ userId: user._id, email })
+
+  const jwtOptions: SignOptions = {
+    expiresIn: remember === true ? '36h' : process.env.JWT_TOKEN_EXPIRY
+  }
+
+  const token = generateToken({ userId: user._id, email }, jwtOptions)
   console.log('login ________________')
   return { ...user, token }
 }

@@ -2,7 +2,7 @@ import mongoose, { Schema, type Document, type Model } from 'mongoose'
 import { schemaDefault } from '../utils/defaultSettings'
 import { enums } from '../data' // Assuming BookStatus is an enum or constants for allowed book status values.
 
-interface Book extends Document {
+export interface BookType extends Document {
   userId: Schema.Types.ObjectId
   name: string
   status: keyof enums.BookStatus
@@ -12,7 +12,7 @@ interface Book extends Document {
   id: string
 }
 
-const bookSchema = new Schema<Book>(
+const bookSchema = new Schema<BookType>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -47,7 +47,7 @@ const bookSchema = new Schema<Book>(
   { ...schemaDefault }
 )
 
-bookSchema.virtual('id').get(function (this: Book) {
+bookSchema.virtual('id').get(function (this: BookType) {
   return this._id.toHexString()
 })
 
@@ -71,6 +71,6 @@ bookSchema.virtual('id').get(function (this: Book) {
 //   }
 // }
 
-const BookModel: Model<Book> = mongoose.model<Book>('book', bookSchema)
+const BookModel: Model<BookType> = mongoose.model<BookType>('book', bookSchema)
 
 export default BookModel

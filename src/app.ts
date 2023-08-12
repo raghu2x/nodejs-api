@@ -8,6 +8,8 @@ config() // Equivalent to require('dotenv').config()
 connect()
 const app: express.Express = express() // Explicitly specify the type for 'app'
 
+app.use(express.static('public'))
+
 app.use(express.json())
 app.use('/', router)
 app.use(handleErrors)

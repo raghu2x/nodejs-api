@@ -25,11 +25,25 @@ const createAccount = async (req: Request, res: Response, next: NextFunction): P
 }
 
 const loginAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { email, password } = req.body
+  const { email, password, remember } = req.body
+
+  const ipAddress = req.headers['x-forwarded-for'] ?? req.connection.remoteAddress
 
   try {
-    const user = await userService.loginUser({ email, password })
-    res.status(200).send({ success: true, message: 'login successful', data: user })
+    const user = await userService.loginUser({ email, password, remember })
+    res.status(200)
+    console.log(ipAddress)
+
+    // res.cookie('token', token, {
+    //   maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : null, // Cookie expires after 30 days
+    //   sameSite: process.env.NODE_ENV === 'production' && !isLocalhost ? 'Lax' : 'none',
+    //   httpOnly: true,
+    //   secure: true,
+    //   domain: req.hostname,
+    //   Path: '/'
+    // })
+
+    res.send({ success: true, message: 'login successful', data: user })
   } catch (error) {
     next(error)
   }
