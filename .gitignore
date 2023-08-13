@@ -48,5 +48,4 @@ Thumbs.db
 *.env
 *.rdb
 
-*-lock.json
 .vercel
