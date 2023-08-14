@@ -11,9 +11,6 @@ on:
 
 jobs:
   Deploy-Preview:
-    permissions:
-      deployments: write
-
     runs-on: ubuntu-latest
 
     steps:
