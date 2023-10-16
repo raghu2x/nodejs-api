@@ -31,7 +31,7 @@ export const sendErrorResponse = (
   res: Response,
   statusCode: number = httpStatus.INTERNAL_SERVER_ERROR,
   message: string,
-  error: any
+  error?: any
 ): void => {
   const payload: Payload = {
     success: false,
@@ -40,6 +40,5 @@ export const sendErrorResponse = (
     message: message ?? httpStatus[statusCode],
     error
   }
-  console.log(statusCode, 'apiResponse  --------43')
   res.status(statusCode).json(payload)
 }

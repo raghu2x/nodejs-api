@@ -3,7 +3,7 @@ import { type AuthenticatedRequest } from '../utils/interfaces'
 import apiService from './apiService'
 import { type Response, type NextFunction } from 'express'
 import { sendSuccessResponse } from '../utils/apiResponse'
-import httpStatus = require('http-status')
+import httpStatus from 'http-status'
 
 type AsyncMiddleware = (
   req: AuthenticatedRequest,
@@ -61,7 +61,6 @@ const updateRecordById = (model: Model<Document>): AsyncMiddleware => {
 
       sendSuccessResponse(res, data, httpStatus.OK, 'Record updated successfully')
     } catch (error) {
-      console.log('api error --------------------')
       next(error)
     }
   }
