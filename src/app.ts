@@ -1,17 +1,20 @@
 import express from 'express'
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { connect } from './database/connection'
 import router from './router'
 import handleErrors from './middleware/handleErrors'
+import helmet from 'helmet'
+import cors from 'cors'
 
-config() // Equivalent to require('dotenv').config()
-connect()
-const app: express.Express = express() // Explicitly specify the type for 'app'
+connect() // connect mongoDB
+
+const app: express.Express = express()
 
 app.use(express.static('public'))
-
+app.use(helmet())
+app.use(cors())
 app.use(express.json())
 app.use('/', router)
 app.use(handleErrors)
 
-export default app // Export the 'app' object
+export default app

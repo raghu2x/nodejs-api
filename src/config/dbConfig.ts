@@ -1,9 +1,9 @@
-interface DbConfig {
-  readonly useNewUrlParser: boolean
-  readonly useUnifiedTopology: boolean
-}
+import { type ConnectOptions } from 'mongoose'
 
-export const DB_CONFIG: DbConfig = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+export const DB_CONFIG: ConnectOptions = {
+  family: undefined,
+  hints: undefined,
+  localAddress: undefined,
+  localPort: undefined,
+  lookup: undefined
 }
