@@ -1,9 +1,9 @@
-import User, { type UserType } from '../schema/user' // Update with the correct path and User type
+import User, { type IUser } from '../schema/user' // Update with the correct path and User type
 import { compare, encrypt } from '../utils/authUtils'
 import { createError } from '../utils/helper'
 import { type UserRegistrationData, type LoginData } from '../utils/interfaces'
 
-const checkIfEmailExists = async (email: string): Promise<UserType | null> => {
+const checkIfEmailExists = async (email: string): Promise<IUser | null> => {
   const existingUser = await User.findOne({ email }).select('+password')
   if (existingUser != null) return existingUser
   return null
@@ -14,7 +14,7 @@ const createAccount = async ({
   lastName,
   email,
   password
-}: UserRegistrationData): Promise<UserType> => {
+}: UserRegistrationData): Promise<IUser> => {
   const encryptedPassword = await encrypt(password)
 
   const existingUser = await checkIfEmailExists(email)
@@ -28,10 +28,10 @@ const createAccount = async ({
   })
   const { password: userPassword, ...responseUser } = createdUser.toObject()
 
-  return responseUser as UserType
+  return responseUser as IUser
 }
 
-const loginUser = async ({ email, password }: LoginData): Promise<UserType> => {
+const loginUser = async ({ email, password }: LoginData): Promise<IUser> => {
   const user = await checkIfEmailExists(email)
   if (user == null) throw createError('emailNotExist', email, 401)
   if (!user.verified) throw createError('notVerified', '', 401)
@@ -40,7 +40,7 @@ const loginUser = async ({ email, password }: LoginData): Promise<UserType> => {
   if (!isPasswordMatch) throw createError('InvalidCred', '', 401)
 
   const { password: userPassword, ...responseUser } = user.toObject()
-  return responseUser as UserType
+  return responseUser as IUser
 }
 
 const updateUser = async ({
@@ -49,7 +49,7 @@ const updateUser = async ({
 }: {
   email: string
   [key: string]: any
-}): Promise<UserType> => {
+}): Promise<IUser> => {
   const payload = { ...restdata }
 
   if (payload.password !== undefined) {
@@ -59,7 +59,7 @@ const updateUser = async ({
   if (user == null) throw createError('emailNotExist', email, 401)
 
   const { password: userPassword, ...responseUser } = user.toObject()
-  return responseUser as UserType
+  return responseUser as IUser
 }
 
 export default { createAccount, checkIfEmailExists, loginUser, updateUser }

@@ -1,6 +1,7 @@
 import { type DeleteResult } from 'mongodb'
-import { createError } from '../utils/helper'
 import { type Document, type Model } from 'mongoose' // Replace with the actual import
+import AppError from '../utils/appError'
+import httpStatus from 'http-status'
 
 interface AllRecordsReturn {
   totalRecords: number
@@ -12,24 +13,19 @@ const getAllRecords = async (
   query: Record<string, any> = {}
 ): Promise<AllRecordsReturn> => {
   const { offset, size, sortConfig, searchQuery } = query
-  try {
-    const recordsPromise = model
-      .find({ userId, ...searchQuery })
-      .skip(offset)
-      .limit(size)
-      .sort(sortConfig)
-      .populate('author genre')
+  const recordsPromise = model
+    .find({ userId, ...searchQuery })
+    .skip(offset)
+    .limit(size)
+    .sort(sortConfig)
+    .populate('author genre')
 
-    const totalRecordsPromise = model.countDocuments({ userId, ...searchQuery })
-    const [records, totalRecords] = await Promise.all([recordsPromise, totalRecordsPromise])
+  const totalRecordsPromise = model.countDocuments({ userId, ...searchQuery })
+  const [records, totalRecords] = await Promise.all([recordsPromise, totalRecordsPromise])
 
-    return {
-      totalRecords,
-      records
-    }
-  } catch (error) {
-    console.log(error)
-    throw error
+  return {
+    totalRecords,
+    records
   }
 }
 
@@ -38,16 +34,11 @@ const getOneRecord = async (
   userId: string,
   recordId: string
 ): Promise<Document> => {
-  try {
-    const oneRecord = await model.findOne({ userId, _id: recordId })
-    if (oneRecord == null) {
-      throw createError(404, recordId)
-    }
-    return oneRecord
-  } catch (error) {
-    console.log(error)
-    throw error
+  const oneRecord = await model.findOne({ userId, _id: recordId })
+  if (oneRecord == null) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Record not found!')
   }
+  return oneRecord
 }
 
 const createRecord = async (
@@ -69,7 +60,7 @@ const updateOneRecord = async (
     new: true
   })
   if (updatedRecord == null) {
-    throw createError(404, recordId)
+    throw new AppError(httpStatus.NOT_FOUND, 'Record not found!')
   }
   return updatedRecord
 }
@@ -80,10 +71,11 @@ const deleteOneRecord = async (
   recordId: string
 ): Promise<Document> => {
   const deletedRecord = await model.findOneAndDelete({ userId, _id: recordId })
-  if (deletedRecord == null) {
-    throw createError(404, recordId)
+  if (deletedRecord !== null) {
+    return deletedRecord
   }
-  return deletedRecord
+
+  throw new AppError(httpStatus.NOT_FOUND, 'Record not found!')
 }
 
 const deleteManyRecords = async (
