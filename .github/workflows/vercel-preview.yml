@@ -23,7 +23,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-url: https://nodejs-app-raghu2x.vercel.app/
-          environment: preview
+          environment: Preview
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
