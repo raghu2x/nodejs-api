@@ -2,28 +2,31 @@ import { type DeleteResult } from 'mongodb'
 import { type Document, type Model } from 'mongoose' // Replace with the actual import
 import AppError from '../utils/appError'
 import httpStatus from 'http-status'
+import APIFeatures from '../utils/apiFeature'
+import { queryBuilder, type PaginationQuery } from '../utils/helper'
 
 interface AllRecordsReturn {
   totalRecords: number
   records: Document[]
+  pagination: PaginationQuery
 }
+
 const getAllRecords = async (
   model: Model<Document>,
   userId: string,
-  query: Record<string, any> = {}
+  query: any
 ): Promise<AllRecordsReturn> => {
-  const { offset, size, sortConfig, searchQuery } = query
-  const recordsPromise = model
-    .find({ userId, ...searchQuery })
-    .skip(offset)
-    .limit(size)
-    .sort(sortConfig)
-    .populate('author genre')
+  const searchQuery = queryBuilder(query.search)
+
+  const recordsPromise = new APIFeatures(model.find({ userId, ...searchQuery }), query)
+    .sort()
+    .paginate()
 
   const totalRecordsPromise = model.countDocuments({ userId, ...searchQuery })
-  const [records, totalRecords] = await Promise.all([recordsPromise, totalRecordsPromise])
+  const [records, totalRecords] = await Promise.all([recordsPromise.query, totalRecordsPromise])
 
   return {
+    pagination: recordsPromise.pagination,
     totalRecords,
     records
   }

@@ -2,23 +2,21 @@ import { type Request, type Response, type NextFunction } from 'express'
 import userService from '../services/userService'
 import { generateOTP } from '../utils/authUtils'
 import sendMail from '../services/sendEmail'
+import { SendAccountCreatedResponse } from '../utils/apiResponse'
 
 // create account
 const createAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { firstName, lastName, email, password } = req.body
 
   try {
-    const data = await userService.createUser({
+    await userService.createUser({
       firstName,
       lastName,
       email,
       password
     })
-    res.status(201).send({
-      success: true,
-      message: 'Please verify your email to continue.'
-      // data,
-    })
+
+    SendAccountCreatedResponse(res)
   } catch (error) {
     next(error)
   }
