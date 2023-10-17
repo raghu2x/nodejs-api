@@ -1,20 +1,30 @@
 import express from 'express'
 import 'dotenv/config'
-import { connect } from './database/connection'
+import './database/connection'
 import router from './router'
 import handleErrors from './middleware/handleErrors'
 import helmet from 'helmet'
 import cors from 'cors'
 
-connect() // connect mongoDB
-
 const app: express.Express = express()
 
 app.use(express.static('public'))
-app.use(helmet())
+
+// Body parser, reading data from body into req.body
+app.use(
+  express.json({
+    limit: '10kb'
+  })
+)
+
+// Allow Cross-Origin requests
 app.use(cors())
-app.use(express.json())
+
+// Set security HTTP headers
+app.use(helmet())
+
 app.use('/', router)
+
 app.use(handleErrors)
 
 export default app

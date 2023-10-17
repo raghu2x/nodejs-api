@@ -1,4 +1,4 @@
-import { type Response } from 'express'
+import { type Response, type Request } from 'express'
 import httpStatus from 'http-status'
 
 interface Payload {
@@ -41,4 +41,25 @@ export const sendErrorResponse = (
     error
   }
   res.status(statusCode).json(payload)
+}
+
+export const SendEndpointNotFoundResponse = (req: Request, res: Response): void => {
+  const payload: Payload = {
+    success: false,
+    timestamp: new Date(),
+    statusCode: httpStatus.NOT_FOUND,
+    message: "Requested endpoint doesn't exist or method not allowed!"
+  }
+  res.status(httpStatus.NOT_FOUND).json(payload)
+}
+
+export const SendAccountCreatedResponse = (res: Response): void => {
+  res.status(httpStatus.CREATED)
+
+  res.send({
+    success: true,
+    timestamp: new Date(),
+    statusCode: httpStatus.CREATED,
+    message: 'Account created. Verify your email to continue.'
+  })
 }

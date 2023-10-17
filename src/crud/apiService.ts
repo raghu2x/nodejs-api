@@ -1,5 +1,5 @@
 import db from './apiDatabase'
-import { getPagination, queryBuilder, type PaginationQuery } from '../utils/helper'
+import { type PaginationQuery } from '../utils/helper'
 import { type Model } from 'mongoose' // Replace with the actual import
 import { type DeleteResult } from 'mongodb'
 
@@ -14,16 +14,8 @@ const create = async (model: Model<any>, userId: string, record: any): Promise<a
 }
 
 const getAll = async (model: Model<any>, userId: string, query: any): Promise<AllRecords> => {
-  const { page, size, offset, sortBy, ascending, sortConfig } = getPagination(query)
-  const searchQuery = queryBuilder(query.search)
-
-  const allRecords = await db.getAllRecords(model, userId, {
-    offset,
-    size,
-    sortConfig,
-    searchQuery
-  })
-  return { page, size, sortBy, ascending, ...allRecords }
+  const allRecords = await db.getAllRecords(model, userId, query)
+  return allRecords
 }
 
 const getOne = async (model: Model<any>, userId: string, recordId: string): Promise<any> => {
