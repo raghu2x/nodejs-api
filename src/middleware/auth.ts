@@ -5,7 +5,8 @@ import { type AuthenticatedRequest, type AuthenticatedUser } from '../utils/inte
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const { JWT_TOKEN, HEADER_TOKEN_KEY } = process.env
 
-  const token = req.headers[HEADER_TOKEN_KEY ?? '']
+  const tokenKey = HEADER_TOKEN_KEY ?? ''
+  const token = req.cookies[tokenKey] ?? req.headers[tokenKey] ?? req.body[tokenKey]
 
   console.log('_________________________ authenticating user')
 

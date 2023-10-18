@@ -1,6 +1,8 @@
 import mongoose, { type Schema, type Document, type Model, type Types } from 'mongoose'
 import { validate } from '../utils/validator'
 import { schemaDefault } from '../utils/defaultSettings'
+import AppError from '../utils/appError'
+import httpStatus from 'http-status'
 
 export interface IUser extends Document {
   firstName: string
@@ -12,6 +14,13 @@ export interface IUser extends Document {
   token?: string
   fullName: string
   books: Types.Array<Schema.Types.ObjectId>
+}
+
+export interface IUserModel extends Model<IUser> {
+  // Define your static methods here
+  get: (email: string) => Promise<IUser>
+  checkDuplicateEmail: (error: Error) => Error | AppError
+  correctPassword: (password: string) => true
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -78,6 +87,24 @@ userSchema.virtual('books', {
   justOne: false
 })
 
-const UserModel: Model<IUser> = mongoose.model<IUser>('user', userSchema)
+userSchema.statics.get = async function (email: string): Promise<IUser | null> {
+  const user: IUser | null = await this.findOne({ email }).select('+password').exec()
+
+  if (user !== null) {
+    return user
+  }
+
+  throw new AppError(httpStatus.NOT_FOUND, 'User does not exist')
+}
+
+userSchema.statics.checkDuplicateEmail = function (error): Error | AppError {
+  console.log(error, '----------------------mongooge error')
+  if (error.code === 11000) {
+    return new AppError(httpStatus.CONFLICT, "'Email' already exists")
+  }
+  return error
+}
+
+const UserModel: IUserModel = mongoose.model<IUser, IUserModel>('user', userSchema)
 
 export default UserModel
