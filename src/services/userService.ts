@@ -48,8 +48,7 @@ const loginUser = async ({ email, password, remember }: LoginData): Promise<any>
 const verifyAccount = async ({ email, code }: VerificationData): Promise<any> => {
   try {
     // verify if account is already verified
-    const existingUser = await userDB.checkIfEmailExists(email)
-    if (existingUser == null) throw createError('accountNotExist', '', 401)
+    const existingUser = await User.get(email)
     if (existingUser.verified) throw createError('alreadyVerified', '', 200)
 
     // check if otp is not present than send
@@ -61,8 +60,7 @@ const verifyAccount = async ({ email, code }: VerificationData): Promise<any> =>
 
     // verify otp here
     await verifyOTP({ email, code })
-    // TODO: take this code to data access layer
-    const user = await User.findOneAndUpdate({ email }, { verified: true }, { new: true })
+    const user = await userDB.updateUser({ email, verified: true })
     return { message: 'Account verified', data: user }
   } catch (error) {
     console.error('Error verifying account:', error)
@@ -71,8 +69,8 @@ const verifyAccount = async ({ email, code }: VerificationData): Promise<any> =>
 }
 
 const forgotPassword = async ({ email }): Promise<any> => {
-  const existingUser = await userDB.checkIfEmailExists(email)
-  if (existingUser == null) throw createError('accountNotExist', '', 401)
+  // 1. Check user exist
+  await User.get(email)
 
   const { code } = await saveOTP({ email, type: 'resetToken' })
   await sendOTP({ otp: code, email })

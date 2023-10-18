@@ -31,15 +31,17 @@ const loginAccount = async (req: Request, res: Response, next: NextFunction): Pr
     const user = await userService.loginUser({ email, password, remember })
     res.status(200)
     console.log(ipAddress)
+    console.log(req.hostname)
 
-    // res.cookie('token', token, {
-    //   maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : null, // Cookie expires after 30 days
-    //   sameSite: process.env.NODE_ENV === 'production' && !isLocalhost ? 'Lax' : 'none',
-    //   httpOnly: true,
-    //   secure: true,
-    //   domain: req.hostname,
-    //   Path: '/'
-    // })
+    const isLocalhost = req.hostname === 'localhost'
+    res.cookie('token', user.token, {
+      maxAge: remember === true ? 365 * 24 * 60 * 60 * 1000 : undefined, // Cookie expires after 30 days
+      sameSite: process.env.NODE_ENV === 'production' && !isLocalhost ? 'lax' : 'none',
+      httpOnly: true,
+      secure: true,
+      domain: req.hostname,
+      path: '/'
+    })
 
     res.send({ success: true, message: 'login successful', data: user })
   } catch (error) {

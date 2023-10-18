@@ -5,10 +5,13 @@ import router from './router'
 import handleErrors from './middleware/handleErrors'
 import helmet from 'helmet'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 const app: express.Express = express()
 
 app.use(express.static('public'))
+
+app.use(cookieParser())
 
 // Body parser, reading data from body into req.body
 app.use(
