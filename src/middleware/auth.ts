@@ -6,7 +6,7 @@ const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunctio
   const { JWT_TOKEN, HEADER_TOKEN_KEY } = process.env
 
   const tokenKey = HEADER_TOKEN_KEY ?? ''
-  const token = req.cookies[tokenKey] ?? req.headers[tokenKey] ?? req.body[tokenKey]
+  const token = req.cookies[tokenKey]
 
   console.log('_________________________ authenticating user')
 

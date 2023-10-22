@@ -1,20 +1,18 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import userService from '../services/userService'
-import { generateOTP } from '../utils/authUtils'
-import sendMail from '../services/sendEmail'
-import { SendAccountCreatedResponse } from '../utils/apiResponse'
+import {
+  SendAccountCreatedResponse,
+  SendLoginResponse,
+  sendSuccessResponse
+} from '../utils/apiResponse'
+import userValidation from '../validations/user.validation'
+import httpStatus from 'http-status'
 
 // create account
 const createAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { firstName, lastName, email, password } = req.body
-
   try {
-    await userService.createUser({
-      firstName,
-      lastName,
-      email,
-      password
-    })
+    const value = await userValidation.register.validateAsync(req.body)
+    await userService.createUser(value)
 
     SendAccountCreatedResponse(res)
   } catch (error) {
@@ -23,19 +21,19 @@ const createAccount = async (req: Request, res: Response, next: NextFunction): P
 }
 
 const loginAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { email, password, remember } = req.body
-
-  const ipAddress = req.headers['x-forwarded-for'] ?? req.connection.remoteAddress
-
+  // const ipAddress = req.headers['x-forwarded-for'] ?? req.connection.remoteAddress
   try {
-    const user = await userService.loginUser({ email, password, remember })
-    res.status(200)
-    console.log(ipAddress)
-    console.log(req.hostname)
+    const value = await userValidation.login.validateAsync(req.body)
 
+    const user = await userService.loginUser(value)
+
+    const { remember } = value
     const isLocalhost = req.hostname === 'localhost'
-    res.cookie('token', user.token, {
-      maxAge: remember === true ? 365 * 24 * 60 * 60 * 1000 : undefined, // Cookie expires after 30 days
+
+    const ONE_DAY = 24 * 60 * 60 * 1000 // Cookie expires after 1 day
+    const ONE_YEAR = 365 * ONE_DAY // Cookie expires after 365 days
+    res.cookie(process.env.HEADER_TOKEN_KEY ?? '', user.token, {
+      maxAge: remember === true ? ONE_YEAR : ONE_DAY,
       sameSite: process.env.NODE_ENV === 'production' && !isLocalhost ? 'lax' : 'none',
       httpOnly: true,
       secure: true,
@@ -43,18 +41,7 @@ const loginAccount = async (req: Request, res: Response, next: NextFunction): Pr
       path: '/'
     })
 
-    res.send({ success: true, message: 'login successful', data: user })
-  } catch (error) {
-    next(error)
-  }
-}
-
-const sendEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const OTP = generateOTP()
-  const data = { OTP, to: 'raghvendra4077@gmail.com' }
-  try {
-    await sendMail(data)
-    res.send({ success: true, message: 'Email sent' })
+    SendLoginResponse(res, user)
   } catch (error) {
     next(error)
   }
@@ -71,24 +58,20 @@ const verifyAccount = async (req: Request, res: Response, next: NextFunction): P
 }
 
 const forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { email } = req.body
   try {
-    const data = await userService.forgotPassword({ email })
-    res.send({
-      success: true,
-      message: 'Check your email to reset your password'
-    })
+    const value = await userValidation.forgotPassword.validateAsync(req.body)
+    await userService.forgotPassword(value)
+    sendSuccessResponse(res, undefined, httpStatus.OK, 'OTP sent on your email for password reset.')
   } catch (error) {
     next(error)
   }
 }
 
 const resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { token } = req.params
-  const { password, email } = req.body
   try {
-    const data = await userService.resetPassword({ password, token, email })
-    res.send({ success: true, ...data })
+    const value = await userValidation.resetPassword.validateAsync(req.body)
+    const data = await userService.resetPassword(value)
+    sendSuccessResponse(res, data, httpStatus.OK, 'Account verified.')
   } catch (error) {
     next(error)
   }
@@ -97,7 +80,6 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction): P
 export default {
   createAccount,
   loginAccount,
-  sendEmail,
   verifyAccount,
   forgotPassword,
   resetPassword

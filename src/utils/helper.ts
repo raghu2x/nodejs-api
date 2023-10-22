@@ -45,6 +45,11 @@ interface PaginationConfig {
   ascending: boolean
 }
 
+/**
+ * @deprecated
+ * @param query
+ * @returns
+ */
 const getPagination = (query: PaginationQuery = {}): PaginationConfig => {
   const { page = 1, size = 100, sortBy = '', ascending = true } = query
   const offset = (page - 1) * size
