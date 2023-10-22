@@ -39,4 +39,17 @@ router.get('/api/endpoints', (req: Request, res: Response) => {
   // })
 })
 
+// const sendEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//   const OTP = generateOTP()
+//   const data = { OTP, to: 'raghvendra4077@gmail.com' }
+//   try {
+//     await sendMail(data)
+//     res.send({ success: true, message: 'Email sent' })
+//   } catch (error) {
+//     next(error)
+//   }
+// }
+
+// router.post('/send-otp', authController.sendOTP)
+// router.post('/send-email', authController.sendEmail)
 export default router

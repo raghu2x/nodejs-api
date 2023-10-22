@@ -12,7 +12,7 @@ interface Payload {
 
 export const sendSuccessResponse = (
   res: Response,
-  data: Record<string, any>,
+  data?: Record<string, any>,
   statusCode: number = httpStatus.OK,
   message?: string
 ): void => {
@@ -61,5 +61,17 @@ export const SendAccountCreatedResponse = (res: Response): void => {
     timestamp: new Date(),
     statusCode: httpStatus.CREATED,
     message: 'Account created. Verify your email to continue.'
+  })
+}
+
+export const SendLoginResponse = (res: Response, data: Record<string, any>): void => {
+  res.status(httpStatus.OK)
+
+  res.send({
+    success: true,
+    timestamp: new Date(),
+    statusCode: httpStatus.OK,
+    message: 'Login successfull',
+    data
   })
 }
