@@ -1,9 +1,9 @@
 import type { Response, NextFunction } from 'express'
 import * as jwt from 'jsonwebtoken'
-import { type AuthenticatedRequest, type AuthenticatedUser } from '../utils/interfaces'
-import { sendErrorResponse } from 'utils/apiResponse'
+import { type AuthenticatedRequest, type AuthenticatedUser } from '@/utils/interfaces'
+import { sendErrorResponse } from '../utils/apiResponse'
 import httpStatus from 'http-status'
-import { getDBModel } from 'database/connection'
+import { getDBModel } from '../database/connection'
 
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const { JWT_TOKEN, HEADER_TOKEN_KEY } = process.env

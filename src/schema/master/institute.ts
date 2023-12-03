@@ -2,7 +2,7 @@ import { Schema, type Document } from 'mongoose'
 import { schemaDefault } from '../../utils/defaultSettings'
 import { enums } from '../../data' // Assuming BookStatus is an enum or constants for allowed book status values.
 import httpStatus from 'http-status'
-import AppError from 'utils/appError'
+import AppError from '../../utils/appError'
 
 export interface InstituteType extends Document {
   name: string
