@@ -1,4 +1,4 @@
-import User from '../schema/user' // users schema
+import { type IUser } from '../schema/user' // users schema
 import { generateToken } from '../utils/authUtils'
 import { saveOTP, verifyOTP } from './otpService'
 import sendMail from './sendEmail'
@@ -18,37 +18,32 @@ const sendOTP = async ({ email, otp }: VerificationData): Promise<any> => {
   return mailData
 }
 
-const createUser = async ({
-  firstName,
-  lastName,
-  email,
-  password
-}: UserRegistrationData): Promise<any> => {
-  const user = await userDB.createAccount({ firstName, lastName, email, password })
+const createUser = async (userData: UserRegistrationData, model): Promise<any> => {
+  const user = await userDB.createAccount(userData, model)
 
   //  send OTP
-  const { code: otp, email: userEmail } = await saveOTP({ email })
+  const { code: otp, email: userEmail } = await saveOTP({ email: userData.email })
   await sendOTP({ otp, email: userEmail })
 
   return user
 }
 
-const loginUser = async ({ email, password, remember }: LoginData): Promise<any> => {
-  const user = await userDB.loginUser({ email, password })
+const loginUser = async ({ remember, ...userForm }: LoginData, model): Promise<any> => {
+  const user = await userDB.loginUser(userForm, model)
 
   const jwtOptions: SignOptions = {
     expiresIn: remember === true ? '36h' : process.env.JWT_TOKEN_EXPIRY
   }
 
-  const token = generateToken({ userId: user._id, email }, jwtOptions)
+  const token = generateToken({ userId: user._id, email: userForm.email }, jwtOptions)
   console.log('login ________________')
   return { ...user, token }
 }
 
-const verifyAccount = async ({ email, code }: VerificationData): Promise<any> => {
+const verifyAccount = async ({ email, code }: VerificationData, model): Promise<any> => {
   try {
     // verify if account is already verified
-    const existingUser = await User.get(email)
+    const existingUser: IUser = await model.get(email)
     if (existingUser.verified) throw createError('alreadyVerified', '', 200)
 
     // check if otp is not present than send
@@ -60,7 +55,7 @@ const verifyAccount = async ({ email, code }: VerificationData): Promise<any> =>
 
     // verify otp here
     await verifyOTP({ email, code })
-    const user = await userDB.updateUser({ email, verified: true })
+    const user = await userDB.updateUser({ email, verified: true }, model)
     return { message: 'Account verified', data: user }
   } catch (error) {
     console.error('Error verifying account:', error)
@@ -68,18 +63,18 @@ const verifyAccount = async ({ email, code }: VerificationData): Promise<any> =>
   }
 }
 
-const forgotPassword = async ({ email }): Promise<any> => {
+const forgotPassword = async ({ email }, model): Promise<any> => {
   // 1. Check user exist
-  await User.get(email)
+  await model.get(email)
 
   const { code } = await saveOTP({ email, type: 'resetToken' })
   await sendOTP({ otp: code, email })
   return true
 }
 
-const resetPassword = async ({ email, password, token }: PasswordResetData): Promise<any> => {
-  await verifyOTP({ email, code: token, type: 'resetToken' })
-  const user = await userDB.updateUser({ email, password })
+const resetPassword = async ({ token, ...restForm }: PasswordResetData, model): Promise<any> => {
+  await verifyOTP({ email: restForm.email, code: token, type: 'resetToken' })
+  const user = await userDB.updateUser(restForm, model)
   return { message: 'password reset success', data: user }
 }
 

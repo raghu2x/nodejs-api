@@ -1,11 +1,14 @@
 import type { Request } from 'express'
 import type { JwtPayload } from 'jsonwebtoken'
+import { type Connection } from 'mongoose'
 
 export interface AuthenticatedUser extends JwtPayload {
   userId: string
 }
 export interface AuthenticatedRequest extends Request {
   user: AuthenticatedUser // Use union type to make it flexible
+  masterDb: Connection
+  schoolDb: Connection
 }
 
 export interface UserRegistrationData {

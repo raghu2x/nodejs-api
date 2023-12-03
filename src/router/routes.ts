@@ -1,5 +1,12 @@
 import { Router, type Request, type Response } from 'express'
 import { MAIL_SETTINGS } from '../config'
+import { type AuthenticatedRequest } from 'utils/interfaces'
+import { type Connection } from 'mongoose'
+import { bookSchema } from 'schema/book'
+import { getDBModel } from 'database/connection'
+import AppError from 'utils/appError'
+import httpStatus from 'http-status'
+import { sendErrorResponse, sendSuccessResponse } from 'utils/apiResponse'
 // import IP from 'ip'
 
 const router: Router = Router()
@@ -52,4 +59,20 @@ router.get('/api/endpoints', (req: Request, res: Response) => {
 
 // router.post('/send-otp', authController.sendOTP)
 // router.post('/send-email', authController.sendEmail)
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get('/api/create-tenant', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const model = getDBModel(req.masterDb, 'tenant')
+    const existingTenant = await model.findOne({ schoolId: req.body.schoolId })
+    if (existingTenant != null) throw new AppError(httpStatus.CONFLICT, 'schoolId already exist')
+
+    const data = await model.create(req.body)
+
+    sendSuccessResponse(res, data, httpStatus.CREATED, 'Tenant created!')
+  } catch (error) {
+    sendErrorResponse(res, error.statusCode, error.message)
+  }
+})
+
 export default router

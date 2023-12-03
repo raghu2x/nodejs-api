@@ -12,7 +12,7 @@ export interface BookType extends Document {
   id: string
 }
 
-const bookSchema = new Schema<BookType>(
+export const bookSchema = new Schema<BookType>(
   {
     userId: {
       type: Schema.Types.ObjectId,
