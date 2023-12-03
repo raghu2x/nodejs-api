@@ -2,10 +2,10 @@ import { Router, type Request, type Response } from 'express'
 import { MAIL_SETTINGS } from '../config'
 import { type AuthenticatedRequest } from 'utils/interfaces'
 
-import { getDBModel } from 'database/connection'
-import AppError from 'utils/appError'
+import { getDBModel } from '../database/connection'
+import AppError from '../utils/appError'
 import httpStatus from 'http-status'
-import { sendErrorResponse, sendSuccessResponse } from 'utils/apiResponse'
+import { sendErrorResponse, sendSuccessResponse } from '../utils/apiResponse'
 
 const router: Router = Router()
 

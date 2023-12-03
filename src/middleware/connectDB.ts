@@ -1,12 +1,12 @@
 import { type Connection, type Schema } from 'mongoose'
 import { connectToDatabase, connectToMasterDB } from '../database/connection'
 import { type Request, type Response, type NextFunction } from 'express'
-import studentSchema from 'schema/institute/student'
-import instituteSchema from 'schema/master/institute'
-import { userSchema } from 'schema/institute/user'
+import studentSchema from '../schema/institute/student'
+import instituteSchema from '../schema/master/institute'
+import { userSchema } from '../schema/institute/user'
 import httpStatus from 'http-status'
-import { sendErrorResponse } from 'utils/apiResponse'
-import AppError from 'utils/appError'
+import { sendErrorResponse } from '../utils/apiResponse'
+import AppError from '../utils/appError'
 
 const InstituteSchemas = new Map<string, Schema>([
   ['student', studentSchema],

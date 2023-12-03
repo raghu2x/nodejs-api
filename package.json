@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "node.js app for creating rest api",
   "author": "Raghvendera <raghvendraa.dev@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
+    "start": "tsnd --respawn index.ts",
     "dev": "nodemon",
-    "watch": "ts-node-dev --files --respawn --inspect -r tsconfig-paths/register index.ts",
     "build": "npx tsc",
     "lint": "eslint ./*.js",
     "lint:fix": "eslint --fix ./*.js",

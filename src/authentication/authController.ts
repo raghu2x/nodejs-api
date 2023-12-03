@@ -8,7 +8,7 @@ import {
 } from '../utils/apiResponse'
 import userValidation from '../validations/user.validation'
 import httpStatus from 'http-status'
-import { getDBModel } from 'database/connection'
+import { getDBModel } from '../database/connection'
 
 // create account
 const createAccount = async (
