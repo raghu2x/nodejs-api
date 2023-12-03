@@ -1,9 +1,10 @@
 import { Schema, type Document } from 'mongoose'
-import { schemaDefault } from '../utils/defaultSettings'
-import { enums } from '../data' // Assuming BookStatus is an enum or constants for allowed book status values.
+import { schemaDefault } from '../../utils/defaultSettings'
+import { enums } from '../../data' // Assuming BookStatus is an enum or constants for allowed book status values.
 
 export interface StudentType extends Document {
-  name: string
+  firstName: string
+  lastName: string
   status: keyof enums.BookStatus
   batch: string
   id: string
@@ -11,7 +12,11 @@ export interface StudentType extends Document {
 
 const studentSchema = new Schema<StudentType>(
   {
-    name: {
+    firstName: {
+      type: String,
+      required: true
+    },
+    lastName: {
       type: String,
       required: true
     },

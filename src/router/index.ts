@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import auth from '../middleware/auth'
+import auth from '../authentication/auth.middleware'
 import routes from './routes'
 import authRouter from './authRouter'
 import crudRouter from '../crud/apiRouter'
