@@ -4,6 +4,7 @@ import apiService from './apiService'
 import { type Response, type NextFunction } from 'express'
 import { sendSuccessResponse } from '../utils/apiResponse'
 import httpStatus from 'http-status'
+import validations from '../validations'
 
 type AsyncMiddleware = (
   req: AuthenticatedRequest,
@@ -46,7 +47,9 @@ const createRecord: FunctionI = (modelName, modelSchema) => {
     const { userId } = req.user
     try {
       const model = req.schoolDb.model(modelName, modelSchema)
-      const data = await apiService.create(model, userId, req.body)
+
+      const value = await validations[modelName].create.validateAsync(req.body)
+      const data = await apiService.create(model, userId, value)
 
       sendSuccessResponse(res, data, httpStatus.CREATED, 'New record created')
     } catch (error) {

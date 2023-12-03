@@ -1,6 +1,6 @@
 import { Schema, type Document } from 'mongoose'
-import { schemaDefault } from '../utils/defaultSettings'
-import { enums } from '../data' // Assuming BookStatus is an enum or constants for allowed book status values.
+import { schemaDefault } from '../../utils/defaultSettings'
+import { enums } from '../../data' // Assuming BookStatus is an enum or constants for allowed book status values.
 import httpStatus from 'http-status'
 import AppError from 'utils/appError'
 

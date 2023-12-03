@@ -1,4 +1,4 @@
-import { type DeleteResult } from 'mongodb'
+import { ModifyResult, type DeleteResult } from 'mongodb'
 import { type Document, type Model } from 'mongoose' // Replace with the actual import
 import AppError from '../utils/appError'
 import httpStatus from 'http-status'
@@ -72,7 +72,7 @@ const deleteOneRecord = async (
   model: Model<Document>,
   userId: string,
   recordId: string
-): Promise<Document> => {
+): Promise<ModifyResult> => {
   const deletedRecord = await model.findOneAndDelete({ userId, _id: recordId })
   if (deletedRecord !== null) {
     return deletedRecord

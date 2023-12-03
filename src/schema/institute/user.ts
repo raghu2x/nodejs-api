@@ -1,7 +1,7 @@
 import mongoose, { type Schema, type Document, type Model, type Types } from 'mongoose'
-import { validate } from '../utils/validator'
-import { schemaDefault } from '../utils/defaultSettings'
-import AppError from '../utils/appError'
+import { validate } from '../../utils/validator'
+import { schemaDefault } from '../../utils/defaultSettings'
+import AppError from '../../utils/appError'
 import httpStatus from 'http-status'
 
 export interface IUser extends Document {
@@ -13,7 +13,6 @@ export interface IUser extends Document {
   verified: boolean
   token?: string
   fullName: string
-  books: Types.Array<Schema.Types.ObjectId>
 }
 
 export interface IUserModel extends Model<IUser> {
@@ -80,13 +79,6 @@ userSchema.virtual('id').get(function (this: IUser) {
   return this._id.toHexString()
 })
 
-userSchema.virtual('books', {
-  ref: 'book',
-  localField: '_id',
-  foreignField: 'author',
-  justOne: false
-})
-
 userSchema.statics.get = async function (email: string): Promise<IUser | null> {
   const user: IUser | null = await this.findOne({ email }).select('+password').exec()
 
@@ -105,6 +97,4 @@ userSchema.statics.checkDuplicateEmail = function (error): Error | AppError {
   return error
 }
 
-const UserModel: IUserModel = mongoose.model<IUser, IUserModel>('user', userSchema)
-
-export default UserModel
+export default userSchema
