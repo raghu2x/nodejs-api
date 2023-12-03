@@ -1,4 +1,4 @@
-import { type IUser } from '../schema/user' // users schema
+import { type IUser } from '../schema/institute/user' // users schema
 import { generateToken } from '../utils/authUtils'
 import { saveOTP, verifyOTP } from './otpService'
 import sendMail from './sendEmail'

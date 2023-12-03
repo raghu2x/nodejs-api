@@ -2,6 +2,8 @@
 
 Express API structure with the power of typescript
 
+Get latest: [Postman Collection](https://api.postman.com/collections/25705198-746e7237-2acc-468e-b9d8-885dccb47aae?access_key=PMAT-01HGQY7SFFZBZ902KZRBRDP8VG)
+
 ## Getting Started
 
 To get started with this project, follow these steps:

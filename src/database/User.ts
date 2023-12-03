@@ -1,5 +1,5 @@
 import httpStatus from 'http-status'
-import { type IUserModel, type IUser } from '../schema/user' // Update with the correct path and User type
+import { type IUserModel, type IUser } from '../schema/institute/user' // Update with the correct path and User type
 import AppError from '../utils/appError'
 import { compare, encrypt } from '../utils/authUtils'
 import { createError } from '../utils/helper'
