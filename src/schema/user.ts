@@ -23,7 +23,7 @@ export interface IUserModel extends Model<IUser> {
   correctPassword: (password: string) => true
 }
 
-const userSchema: Schema<IUser> = new mongoose.Schema(
+export const userSchema: Schema<IUser> = new mongoose.Schema(
   {
     firstName: {
       type: String,

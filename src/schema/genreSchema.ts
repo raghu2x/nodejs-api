@@ -8,7 +8,7 @@ interface Genre extends Document {
   id: string
 }
 
-const genreSchema = new Schema<Genre>(
+export const genreSchema = new Schema<Genre>(
   {
     userId: {
       type: Schema.Types.ObjectId,

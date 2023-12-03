@@ -1,6 +1,6 @@
 export enum BookStatus {
-  ACTIVE = 'draft',
-  INACTIVE = 'published'
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
 }
 
 export enum Genders {

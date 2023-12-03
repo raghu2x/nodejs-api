@@ -1,4 +1,4 @@
-import { type Model, type Document } from 'mongoose'
+import { type Document, type Schema } from 'mongoose'
 import { type AuthenticatedRequest } from '../utils/interfaces'
 import apiService from './apiService'
 import { type Response, type NextFunction } from 'express'
@@ -11,10 +11,13 @@ type AsyncMiddleware = (
   next: NextFunction
 ) => Promise<void>
 
-const getAllRecords = (model: Model<Document>): AsyncMiddleware => {
+type FunctionI = (modelName: string, modelSchema: Schema<Document>) => AsyncMiddleware
+
+const getAllRecords: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     try {
       const { userId } = req.user
+      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.getAll(model, userId, req.query)
 
       sendSuccessResponse(res, data, httpStatus.OK)
@@ -24,11 +27,12 @@ const getAllRecords = (model: Model<Document>): AsyncMiddleware => {
   }
 }
 
-const getRecordById = (model: Model<Document>): AsyncMiddleware => {
+const getRecordById: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { id } = req.params
     const { userId } = req.user
     try {
+      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.getOne(model, userId, id)
       sendSuccessResponse(res, data, httpStatus.OK)
     } catch (error) {
@@ -37,10 +41,11 @@ const getRecordById = (model: Model<Document>): AsyncMiddleware => {
   }
 }
 
-const createRecord = (model: Model<Document>): AsyncMiddleware => {
+const createRecord: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { userId } = req.user
     try {
+      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.create(model, userId, req.body)
 
       sendSuccessResponse(res, data, httpStatus.CREATED, 'New record created')
@@ -50,12 +55,13 @@ const createRecord = (model: Model<Document>): AsyncMiddleware => {
   }
 }
 
-const updateRecordById = (model: Model<Document>): AsyncMiddleware => {
+const updateRecordById: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { id } = req.params
     const record = req.body
     const { userId } = req.user
     try {
+      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.updateOne(model, userId, id, record)
       res.send({ success: true, message: 'Record updated successfully', data })
 
@@ -66,11 +72,12 @@ const updateRecordById = (model: Model<Document>): AsyncMiddleware => {
   }
 }
 
-const deleteRecordById = (model: Model<Document>): AsyncMiddleware => {
+const deleteRecordById: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { id } = req.params
     const { userId } = req.user
     try {
+      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.deleteOne(model, userId, id)
       sendSuccessResponse(res, data, httpStatus.OK, 'Record Deleted successfully')
     } catch (error) {
@@ -79,11 +86,12 @@ const deleteRecordById = (model: Model<Document>): AsyncMiddleware => {
   }
 }
 
-const deleteManyRecords = (model: Model<Document>): AsyncMiddleware => {
+const deleteManyRecords: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { ids } = req.body
     const { userId } = req.user
     try {
+      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.deleteManyRecords(model, userId, ids)
 
       sendSuccessResponse(res, data, httpStatus.OK, `Deleted ${data.deletedCount} records`)

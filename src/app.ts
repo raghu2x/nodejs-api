@@ -1,11 +1,12 @@
 import express from 'express'
 import 'dotenv/config'
-import './database/connection'
 import router from './router'
 import handleErrors from './middleware/handleErrors'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+
+import connectDB from './middleware/connectDB'
 
 const app: express.Express = express()
 
@@ -25,6 +26,9 @@ app.use(cors())
 
 // Set security HTTP headers
 app.use(helmet())
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.use(connectDB)
 
 app.use('/', router)
 
