@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import authController from '../controllers/authController'
+import authController from '../authentication/authController'
 
 const router: Router = Router()
 /* eslint-disable */
