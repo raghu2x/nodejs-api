@@ -6,7 +6,7 @@ import { type SignOptions } from 'jsonwebtoken'
 import AppError from '../../utils/appError'
 import httpStatus from 'http-status'
 
-export const loginStaffUser = async (userData: LoginData, model): Promise<any> => {
+export const adminSignIn = async (userData: LoginData, model): Promise<any> => {
   const { remember, institutionName, email, password } = userData
 
   // 1. get User using email
@@ -38,21 +38,13 @@ export const loginStaffUser = async (userData: LoginData, model): Promise<any> =
   return { ...responseUser, token }
 }
 
-export const adminSignIn = async (userData: LoginData, model): Promise<any> => {
-  console.log('staff user sign In .')
-}
-
-export const staffSignIn = async (userData: LoginData, model): Promise<any> => {
-  console.log('staff user sign In .')
-}
-
 /**
- *
+ * This function will be used for authenticate : student|staff|parent
  * @param userData - LoginReq data
  * @param model - user model
  * @returns
  */
-export const studentSignIn = async (userData: LoginData, model): Promise<any> => {
+export const userSignIn = async (userData: LoginData, model): Promise<any> => {
   const { remember, institutionName, userId, userType, password } = userData
 
   const user = await model.findOne({
@@ -81,10 +73,3 @@ export const studentSignIn = async (userData: LoginData, model): Promise<any> =>
 
   return { ...responseUser, token }
 }
-
-/* TODO: work on this later */
-export const parentSignIn = async (userData: LoginData, model): Promise<any> => {
-  console.log('staff user sign In .')
-}
-
-// export default { loginUser }
