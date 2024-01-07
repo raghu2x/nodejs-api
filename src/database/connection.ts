@@ -41,6 +41,19 @@ export const connectToMasterDB = async (): Promise<Connection> => {
   return await connectToDatabase('master_database')
 }
 
+// const createModel = (college_name: string, year_of_admission: string) => {
+//   const mongoConnection = mongoose.connection.useDb('db_' + college_name)
+//   return mongoConnection.model(
+//     'Student',
+//     StudentModel.StudentSchema,
+//     'students_' + year_of_admission
+//   )
+// }
+
+// export const useDB = (dbName: string): void => {
+//   const mongoConnection = connectToDatabase(dbName)
+// }
+
 export const getDBModel = (db: Connection, modelName: string): Model<Document> => {
   const model = db.model(modelName)
   if (model !== null) return model as Model<Document>

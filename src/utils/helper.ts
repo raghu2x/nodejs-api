@@ -32,6 +32,7 @@ const createError = (msgKey: ErrorMessageKey, param: string, statusCode: number 
 export interface PaginationQuery {
   page?: number
   size?: number
+  limit?: number
   sortBy?: string
   ascending?: boolean | string
 }

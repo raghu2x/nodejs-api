@@ -7,13 +7,17 @@ import { userSchema } from '../schema/institute/user'
 import httpStatus from 'http-status'
 import { sendErrorResponse } from '../utils/apiResponse'
 import AppError from '../utils/appError'
+import adminUserSchema from '../schema/master/admin'
 
 const InstituteSchemas = new Map<string, Schema>([
   ['student', studentSchema],
   ['user', userSchema]
 ])
 
-const TenantSchemas = new Map([['tenant', instituteSchema]])
+const TenantSchemas = new Map<string, Schema>([
+  ['tenant', instituteSchema],
+  ['admin', adminUserSchema]
+])
 
 interface CustomRequest extends Request {
   masterDb: Connection

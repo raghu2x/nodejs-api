@@ -13,8 +13,10 @@ module.exports = {
     project: './tsconfig.json'
   },
   rules: {
-    'no-console': 'warn',
+    // 'no-console': 'warn',
     '@typescript-eslint/space-before-function-paren': 'off',
+    '@typescript-eslint/non-nullable-type-assertion-style': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
 
     // import rules
     'import/first': 'error',
