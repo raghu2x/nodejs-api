@@ -1,7 +1,10 @@
-export const schemaDefault = {
+import { type SchemaOptions } from 'mongoose'
+
+export const schemaDefault: SchemaOptions = {
+  autoCreate: true,
   versionKey: false,
   timestamps: true,
-  strictPopulate: false,
+  // strictPopulate: false,
   toJSON: {
     virtuals: true,
     transform: function (doc, ret) {

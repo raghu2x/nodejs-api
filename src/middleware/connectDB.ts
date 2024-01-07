@@ -26,6 +26,7 @@ const registerSchema = (db: Connection, dbSchema): Connection => {
       db.model(modelName, schema)
     })
   }
+
   return db
 }
 
@@ -55,12 +56,12 @@ const connectDB = async (req: CustomRequest, res: Response, next: NextFunction):
     }
 
     // Check if the schoolId exists in the master database
-    const tenantsCollection = masterDb.collection('tenants')
-    const tenantExists = await tenantsCollection.findOne({ schoolId })
+    // const tenantsCollection = masterDb.collection('tenants')
+    // const tenantExists = await tenantsCollection.findOne({ schoolId })
 
-    if (tenantExists === null) {
-      throw new AppError(httpStatus.NOT_FOUND, `School '${schoolId}' does not exist.`)
-    }
+    // if (tenantExists === null) {
+    //   throw new AppError(httpStatus.NOT_FOUND, `School '${schoolId}' does not exist.`)
+    // }
 
     // 4. Connect to the school-specific database
     const schoolDb = await connectToDatabase(schoolId)
@@ -70,9 +71,9 @@ const connectDB = async (req: CustomRequest, res: Response, next: NextFunction):
 
     next()
   } catch (err) {
-    const statusCode: number = err.statusCode ?? httpStatus.INTERNAL_SERVER_ERROR
+    const statusCode: number = err?.statusCode ?? httpStatus.INTERNAL_SERVER_ERROR
 
-    sendErrorResponse(res, statusCode, err.message)
+    sendErrorResponse(res, statusCode, err?.message as string)
   }
 }
 
