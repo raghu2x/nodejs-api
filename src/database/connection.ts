@@ -1,7 +1,12 @@
-import mongoose, { type Model, type Connection, type Document } from 'mongoose'
+import mongoose, { type Model, type Connection, type Document, type ConnectOptions } from 'mongoose'
 // import { DB_CONFIG } from '../config'
 
-mongoose.set('strictQuery', false)
+// mongoose.set('strictQuery', false)
+
+const clientOption: ConnectOptions = {
+  socketTimeoutMS: 30000
+  // family: 4
+}
 
 interface ConnectionInfo {
   uri: string
@@ -19,7 +24,7 @@ export const connectToDatabase = async (dbName: string): Promise<Connection> => 
       return existingConnection.connection
     }
 
-    const newConnection = mongoose.createConnection(uri, {})
+    const newConnection = mongoose.createConnection(uri, clientOption)
 
     connections.push({ uri, connection: newConnection })
     console.log(`Connected to the database: ${uri}`)
