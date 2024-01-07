@@ -1,4 +1,4 @@
-import mongoose, { type Schema, type Document, type Model } from 'mongoose'
+import mongoose, { type Schema, type Document, type Model, type Connection } from 'mongoose'
 import { validate } from '../../utils/validator'
 import { schemaDefault } from '../../utils/defaultSettings'
 import AppError from '../../utils/appError'
@@ -75,9 +75,9 @@ adminUserSchema.virtual('fullName').get(function (this: IAdminUser) {
   return `${this.firstName} ${this.lastName}`
 })
 
-adminUserSchema.virtual('id').get(function (this: IAdminUser) {
-  return this._id.toHexString()
-})
+// adminUserSchema.virtual('id').get(function (this: IAdminUser) {
+//   return this._id.toHexString()
+// })
 
 adminUserSchema.statics.get = async function (email: string): Promise<IAdminUser | null> {
   const user: IAdminUser | null = await this.findOne({ email }).select('+password').exec()
@@ -95,6 +95,10 @@ adminUserSchema.statics.checkDuplicateEmail = function (error): Error | AppError
     return new AppError(httpStatus.CONFLICT, "'Email' already exists")
   }
   return error
+}
+
+export const createModel = (DB: Connection): Model<IAdminUser> => {
+  return DB.model('admin', adminUserSchema)
 }
 
 export default adminUserSchema

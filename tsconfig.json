@@ -6,14 +6,15 @@
     "module": "commonjs",
     "outDir": "./dist",
     "rootDir": "./",
-    "baseUrl": "./src",
     // "strict": true,
     "esModuleInterop": true,
     "allowJs": true,
     "checkJs": false,
     "noImplicitAny": false,
     "strictNullChecks": true,
+    "baseUrl": "./src",
     "paths": {
+      // "src/*": ["./src/*"],
       "@/*": ["*"]
     }
   },

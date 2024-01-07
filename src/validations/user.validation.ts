@@ -1,5 +1,7 @@
+import { USER_TYPES } from '../data/constants'
 import * as Joi from 'joi'
 
+// console.log(Object.values(USER_TYPES))
 /**
  * one uppercase
  * one lowercase
@@ -23,7 +25,7 @@ const login = Joi.object({
   password: Joi.string().required().max(30),
   remember: Joi.boolean(),
   institutionName: Joi.string().required().max(30),
-  userType: Joi.string().required().max(30)
+  userType: Joi.required().valid(...Object.values(USER_TYPES))
 })
 
 const forgotPassword = Joi.object({

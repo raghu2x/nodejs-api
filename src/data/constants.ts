@@ -12,3 +12,10 @@ export const queryDefault = Object.freeze({
   sortBy: null,
   ascending: true
 })
+
+export enum USER_TYPES {
+  ADMIN = 'admin',
+  STUDENT = 'student',
+  STAFF = 'staff',
+  PARENT = 'parent'
+}

@@ -14,7 +14,7 @@ const createAccount = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const model = getDBModel(req.schoolDb, 'user')
+    const model = getDBModel(req.masterDb, 'admin')
     const value: UserRegistrationData = await userValidation.register.validateAsync(req.body)
     await userService.createUser(value, model)
 
@@ -31,7 +31,7 @@ const verifyAccount = async (
 ): Promise<void> => {
   const { code, email } = req.body
   try {
-    const model = getDBModel(req.schoolDb, 'user')
+    const model = getDBModel(req.masterDb, 'admin')
     const data = await userService.verifyAccount({ code, email }, model)
     res.send({ success: true, ...data })
   } catch (error) {
@@ -45,7 +45,7 @@ const forgotPassword = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const model = getDBModel(req.schoolDb, 'user')
+    const model = getDBModel(req.masterDb, 'admin')
     const value = await userValidation.forgotPassword.validateAsync(req.body)
     await userService.forgotPassword(value, model)
     sendSuccessResponse(res, undefined, httpStatus.OK, 'OTP sent on your email for password reset.')
@@ -60,7 +60,7 @@ const resetPassword = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const model = getDBModel(req.schoolDb, 'user')
+    const model = getDBModel(req.masterDb, 'admin')
     const value = await userValidation.resetPassword.validateAsync(req.body)
     const data = await userService.resetPassword(value, model)
     sendSuccessResponse(res, data, httpStatus.OK, 'Account verified.')
