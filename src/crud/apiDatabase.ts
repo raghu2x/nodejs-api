@@ -18,11 +18,9 @@ const getAllRecords = async (
 ): Promise<AllRecordsReturn> => {
   const searchQuery = queryBuilder(query.search)
 
-  const recordsPromise = new APIFeatures(model.find({ userId, ...searchQuery }), query)
-    .sort()
-    .paginate()
+  const recordsPromise = new APIFeatures(model.find({ ...searchQuery }), query).sort().paginate()
 
-  const totalRecordsPromise = model.countDocuments({ userId, ...searchQuery })
+  const totalRecordsPromise = model.countDocuments({ ...searchQuery })
   const [records, totalRecords] = await Promise.all([recordsPromise.query, totalRecordsPromise])
 
   return {
@@ -37,7 +35,7 @@ const getOneRecord = async (
   userId: string,
   recordId: string
 ): Promise<Document> => {
-  const oneRecord = await model.findOne({ userId, _id: recordId })
+  const oneRecord = await model.findOne({ _id: recordId })
   if (oneRecord == null) {
     throw new AppError(httpStatus.NOT_FOUND, 'Record not found!')
   }
@@ -49,7 +47,7 @@ const createRecord = async (
   userId: string,
   record: any
 ): Promise<Document> => {
-  const createdRecord = await model.create({ ...record, userId })
+  const createdRecord = await model.create({ ...record })
   return createdRecord
 }
 
@@ -59,7 +57,7 @@ const updateOneRecord = async (
   recordId: string,
   record: Document
 ): Promise<Document> => {
-  const updatedRecord = await model.findOneAndUpdate({ userId, _id: recordId }, record, {
+  const updatedRecord = await model.findOneAndUpdate({ _id: recordId }, record, {
     new: true
   })
   if (updatedRecord == null) {
@@ -73,7 +71,7 @@ const deleteOneRecord = async (
   userId: string,
   recordId: string
 ): Promise<Document> => {
-  const deletedRecord = await model.findOneAndDelete({ userId, _id: recordId })
+  const deletedRecord = await model.findOneAndDelete({ _id: recordId })
   if (deletedRecord !== null) {
     return deletedRecord
   }
@@ -87,7 +85,6 @@ const deleteManyRecords = async (
   recordIds: string[]
 ): Promise<DeleteResult> => {
   const deletedRecords = await model.deleteMany({
-    userId,
     _id: { $in: recordIds }
   })
   return deletedRecords

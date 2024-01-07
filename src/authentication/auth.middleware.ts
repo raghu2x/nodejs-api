@@ -4,18 +4,16 @@ import { type AuthenticatedRequest, type AuthenticatedUser } from '@/utils/inter
 import { sendErrorResponse } from '../utils/apiResponse'
 import httpStatus from 'http-status'
 import { getDBModel } from '../database/connection'
+import { env } from '../utils/env'
 
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-  const { JWT_TOKEN, HEADER_TOKEN_KEY } = process.env
-
-  const tokenKey = HEADER_TOKEN_KEY ?? ''
-  const token = req.cookies[tokenKey]
+  const token = req.cookies[env('HEADER_TOKEN_KEY')]
 
   console.log('_________________________ authenticating user')
 
   if (token !== undefined && typeof token === 'string') {
     try {
-      const user = jwt.verify(token, JWT_TOKEN ?? '') as AuthenticatedUser
+      const user = jwt.verify(token, env('JWT_TOKEN')) as AuthenticatedUser
       const userModel = getDBModel(req.schoolDb, 'user')
 
       req.user = user

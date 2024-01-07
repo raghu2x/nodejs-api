@@ -1,4 +1,8 @@
-import { type AuthenticatedRequest } from '../utils/interfaces'
+import {
+  type UserRegistrationData,
+  type AuthenticatedRequest,
+  type LoginData
+} from '../utils/interfaces'
 import { type Response, type NextFunction } from 'express'
 import userService from '../services/userService'
 import {
@@ -9,6 +13,7 @@ import {
 import userValidation from '../validations/user.validation'
 import httpStatus from 'http-status'
 import { getDBModel } from '../database/connection'
+import { env } from '../utils/env'
 
 // create account
 const createAccount = async (
@@ -18,7 +23,7 @@ const createAccount = async (
 ): Promise<void> => {
   try {
     const model = getDBModel(req.schoolDb, 'user')
-    const value = await userValidation.register.validateAsync(req.body)
+    const value: UserRegistrationData = await userValidation.register.validateAsync(req.body)
     await userService.createUser(value, model)
 
     SendAccountCreatedResponse(res)
@@ -35,16 +40,17 @@ const loginAccount = async (
   // const ipAddress = req.headers['x-forwarded-for'] ?? req.connection.remoteAddress
   try {
     const model = getDBModel(req.schoolDb, 'user')
-    const value = await userValidation.login.validateAsync(req.body)
+    const value: LoginData = await userValidation.login.validateAsync(req.body)
+    const schoolId = req.get('x-school-id') as string
 
-    const user = await userService.loginUser(value, model)
+    const user = await userService.loginUser(value, model, schoolId)
 
     const { remember } = value
     const isLocalhost = req.hostname === 'localhost'
 
     const ONE_DAY = 24 * 60 * 60 * 1000 // Cookie expires after 1 day
     const ONE_YEAR = 365 * ONE_DAY // Cookie expires after 365 days
-    res.cookie(process.env.HEADER_TOKEN_KEY ?? '', user.token, {
+    res.cookie(env('HEADER_TOKEN_KEY'), user.token, {
       maxAge: remember === true ? ONE_YEAR : ONE_DAY,
       sameSite: process.env.NODE_ENV === 'production' && !isLocalhost ? 'lax' : 'none',
       httpOnly: true,

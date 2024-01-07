@@ -1,7 +1,9 @@
 import { type SchemaOptions } from 'mongoose'
 
 export const schemaDefault: SchemaOptions = {
-  autoCreate: true,
+  // _id: false,
+  // id: true,
+  // autoCreate: true,
   versionKey: false,
   timestamps: true,
   // strictPopulate: false,

@@ -4,6 +4,7 @@ import { type Connection } from 'mongoose'
 
 export interface AuthenticatedUser extends JwtPayload {
   userId: string
+  schoolId: string
 }
 export interface AuthenticatedRequest extends Request {
   user: AuthenticatedUser // Use union type to make it flexible
