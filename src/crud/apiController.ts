@@ -1,10 +1,11 @@
-import { type Document, type Schema } from 'mongoose'
-import { type AuthenticatedRequest } from '../utils/interfaces'
+import { type Model, type Document, type Schema, type Connection } from 'mongoose'
+import { type AuthenticatedUser, type AuthenticatedRequest } from '../utils/interfaces'
 import apiService from './apiService'
 import { type Response, type NextFunction } from 'express'
 import { sendSuccessResponse } from '../utils/apiResponse'
 import httpStatus from 'http-status'
 import validations from '../validations'
+import { useDB } from '../database/connection'
 
 type AsyncMiddleware = (
   req: AuthenticatedRequest,
@@ -14,11 +15,19 @@ type AsyncMiddleware = (
 
 type FunctionI = (modelName: string, modelSchema: Schema<Document>) => AsyncMiddleware
 
+const createModel = (db: Connection, modelName: string, modelSchema): Model<Document> => {
+  return db.model(modelName, modelSchema) as Model<Document>
+}
+
 const getAllRecords: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     try {
-      const { userId } = req.user
-      const model = req.schoolDb.model(modelName, modelSchema)
+      const { userId, institutionName }: AuthenticatedUser = req.user
+
+      const institutionDB = await useDB(institutionName)
+      const model = createModel(institutionDB, modelName, modelSchema)
+
+      console.log(institutionName)
       const data = await apiService.getAll(model, userId, req.query)
 
       sendSuccessResponse(res, data, httpStatus.OK)
@@ -31,10 +40,13 @@ const getAllRecords: FunctionI = (modelName, modelSchema) => {
 const getRecordById: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { id } = req.params
-    const { userId } = req.user
+    const { userId, institutionName }: AuthenticatedUser = req.user
+
+    const institutionDB = await useDB(institutionName)
+    const model = createModel(institutionDB, modelName, modelSchema)
+
     try {
-      const model = req.schoolDb.model(modelName, modelSchema)
-      const data = await apiService.getOne(model, userId, id)
+      const data: Record<string, any> = await apiService.getOne(model, userId, id)
       sendSuccessResponse(res, data, httpStatus.OK)
     } catch (error) {
       next(error)
@@ -44,12 +56,18 @@ const getRecordById: FunctionI = (modelName, modelSchema) => {
 
 const createRecord: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
-    const { userId } = req.user
-    try {
-      const model = req.schoolDb.model(modelName, modelSchema)
+    const { userId, institutionName }: AuthenticatedUser = req.user
 
-      const value = await validations[modelName].create.validateAsync(req.body)
-      const data = await apiService.create(model, userId, value)
+    try {
+      const institutionDB = await useDB(institutionName)
+      const model = createModel(institutionDB, modelName, modelSchema)
+
+      // 1. check if validations are defined
+      if (validations[modelName]?.create !== undefined) {
+        req.body = await validations[modelName].create.validateAsync(req.body)
+      }
+
+      const data: Record<string, any> = await apiService.create(model, userId, req.body)
 
       sendSuccessResponse(res, data, httpStatus.CREATED, 'New record created')
     } catch (error) {
@@ -62,9 +80,12 @@ const updateRecordById: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { id } = req.params
     const record = req.body
-    const { userId } = req.user
+    const { userId, institutionName }: AuthenticatedUser = req.user
+
+    const institutionDB = await useDB(institutionName)
+    const model = createModel(institutionDB, modelName, modelSchema)
+
     try {
-      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.updateOne(model, userId, id, record)
       res.send({ success: true, message: 'Record updated successfully', data })
 
@@ -78,9 +99,12 @@ const updateRecordById: FunctionI = (modelName, modelSchema) => {
 const deleteRecordById: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const { id } = req.params
-    const { userId } = req.user
+    const { userId, institutionName }: AuthenticatedUser = req.user
+
+    const institutionDB = await useDB(institutionName)
+    const model = createModel(institutionDB, modelName, modelSchema)
+
     try {
-      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.deleteOne(model, userId, id)
       sendSuccessResponse(res, data, httpStatus.OK, 'Record Deleted successfully')
     } catch (error) {
@@ -92,9 +116,12 @@ const deleteRecordById: FunctionI = (modelName, modelSchema) => {
 const deleteManyRecords: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
     const ids: string[] = req.body.ids
-    const { userId } = req.user
+    const { userId, institutionName }: AuthenticatedUser = req.user
+
+    const institutionDB = await useDB(institutionName)
+    const model = createModel(institutionDB, modelName, modelSchema)
+
     try {
-      const model = req.schoolDb.model(modelName, modelSchema)
       const data = await apiService.deleteManyRecords(model, userId, ids)
 
       sendSuccessResponse(res, data, httpStatus.OK, `Deleted ${data.deletedCount} records`)

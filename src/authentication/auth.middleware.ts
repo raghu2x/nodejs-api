@@ -1,20 +1,20 @@
 import type { Response, NextFunction } from 'express'
 import * as jwt from 'jsonwebtoken'
-import { type AuthenticatedRequest, type AuthenticatedUser } from '@/utils/interfaces'
+import { type AuthenticatedRequest, type AuthenticatedUser } from '../utils/interfaces'
 import { sendErrorResponse } from '../utils/apiResponse'
 import httpStatus from 'http-status'
 import { getDBModel } from '../database/connection'
 import { env } from '../utils/env'
 
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-  const token = req.cookies[env('HEADER_TOKEN_KEY')]
+  const token: string = req.cookies[env('HEADER_TOKEN_KEY')]
 
-  console.log('_________________________ authenticating user')
+  console.log('🤞 authenticating user')
 
-  if (token !== undefined && typeof token === 'string') {
+  if (token !== undefined) {
     try {
       const user = jwt.verify(token, env('JWT_TOKEN')) as AuthenticatedUser
-      const userModel = getDBModel(req.schoolDb, 'user')
+      // const userModel = getDBModel(req.schoolDb, 'user')
 
       req.user = user
       next()
