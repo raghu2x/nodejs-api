@@ -33,8 +33,4 @@ const studentSchema = new Schema<StudentType>(
   { ...schemaDefault }
 )
 
-studentSchema.virtual('id').get(function (this: StudentType) {
-  return this._id.toHexString()
-})
-
 export default studentSchema

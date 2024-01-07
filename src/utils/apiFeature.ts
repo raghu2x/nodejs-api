@@ -1,16 +1,17 @@
 import { type Document, type Query } from 'mongoose'
+import { type Query as APIQuery, type PaginationQuery } from './helper'
 
 class APIFeatures<T extends Document> {
   query: Query<T[], T>
-  queryString: any
-  pagination: any = {}
+  queryString: APIQuery
+  pagination: PaginationQuery = {}
 
-  constructor(query: Query<T[], T>, queryString: any) {
+  constructor(query: Query<T[], T>, queryString: APIQuery) {
     this.query = query
     this.queryString = queryString
   }
 
-  sort(): APIFeatures<T> {
+  sort(): this {
     const { sortBy, ascending } = this.queryString
     const isAscending = ascending === 'true' || ascending === true
 
@@ -23,9 +24,9 @@ class APIFeatures<T extends Document> {
     return this
   }
 
-  paginate(): APIFeatures<T> {
-    const page = this.queryString.page * 1 ?? 1
-    const limit = this.queryString.limit * 1 ?? 10
+  paginate(): this {
+    const page = Number(this.queryString.page ?? 1)
+    const limit = Number(this.queryString.limit ?? 10)
     const skip = (page - 1) * limit
 
     this.query = this.query.skip(skip).limit(limit)

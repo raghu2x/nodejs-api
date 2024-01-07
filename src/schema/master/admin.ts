@@ -4,7 +4,7 @@ import { schemaDefault } from '../../utils/defaultSettings'
 import AppError from '../../utils/appError'
 import httpStatus from 'http-status'
 
-export interface IUser extends Document {
+export interface IAdminUser extends Document {
   firstName: string
   lastName: string
   email: string
@@ -15,14 +15,14 @@ export interface IUser extends Document {
   fullName: string
 }
 
-export interface IUserModel extends Model<IUser> {
+export interface IAdminUserModel extends Model<IAdminUser> {
   // Define your static methods here
-  get: (email: string) => Promise<IUser>
+  get: (email: string) => Promise<IAdminUser>
   checkDuplicateEmail: (error: Error) => Error | AppError
   correctPassword: (password: string) => true
 }
 
-export const userSchema: Schema<IUser> = new mongoose.Schema(
+export const adminUserSchema: Schema<IAdminUser> = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -71,16 +71,16 @@ export const userSchema: Schema<IUser> = new mongoose.Schema(
   { ...schemaDefault }
 )
 
-userSchema.virtual('fullName').get(function (this: IUser) {
+adminUserSchema.virtual('fullName').get(function (this: IAdminUser) {
   return `${this.firstName} ${this.lastName}`
 })
 
-userSchema.virtual('id').get(function (this: IUser) {
+adminUserSchema.virtual('id').get(function (this: IAdminUser) {
   return this._id.toHexString()
 })
 
-userSchema.statics.get = async function (email: string): Promise<IUser | null> {
-  const user: IUser | null = await this.findOne({ email }).select('+password').exec()
+adminUserSchema.statics.get = async function (email: string): Promise<IAdminUser | null> {
+  const user: IAdminUser | null = await this.findOne({ email }).select('+password').exec()
 
   if (user !== null) {
     return user
@@ -89,7 +89,7 @@ userSchema.statics.get = async function (email: string): Promise<IUser | null> {
   throw new AppError(httpStatus.NOT_FOUND, 'User does not exist')
 }
 
-userSchema.statics.checkDuplicateEmail = function (error): Error | AppError {
+adminUserSchema.statics.checkDuplicateEmail = function (error): Error | AppError {
   console.log(error, '----------------------mongooge error')
   if (error.code === 11000) {
     return new AppError(httpStatus.CONFLICT, "'Email' already exists")
@@ -97,4 +97,4 @@ userSchema.statics.checkDuplicateEmail = function (error): Error | AppError {
   return error
 }
 
-export default userSchema
+export default adminUserSchema

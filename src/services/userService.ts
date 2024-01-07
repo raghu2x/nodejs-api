@@ -28,14 +28,18 @@ const createUser = async (userData: UserRegistrationData, model): Promise<any> =
   return user
 }
 
-const loginUser = async ({ remember, ...userForm }: LoginData, model): Promise<any> => {
+const loginUser = async (
+  { remember, ...userForm }: LoginData,
+  model,
+  schooId: string
+): Promise<any> => {
   const user = await userDB.loginUser(userForm, model)
 
   const jwtOptions: SignOptions = {
     expiresIn: remember === true ? '36h' : process.env.JWT_TOKEN_EXPIRY
   }
 
-  const token = generateToken({ userId: user._id, email: userForm.email }, jwtOptions)
+  const token = generateToken({ userId: user._id, email: userForm.email, schooId }, jwtOptions)
   console.log('login ________________')
   return { ...user, token }
 }
