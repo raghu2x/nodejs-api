@@ -4,7 +4,9 @@ import { type Connection } from 'mongoose'
 
 export interface AuthenticatedUser extends JwtPayload {
   userId: string
-  schoolId: string
+  institutionName: string
+  userType: 'staff' | 'admin' | 'student' | 'parent'
+  email: string
 }
 export interface AuthenticatedRequest extends Request {
   user: AuthenticatedUser // Use union type to make it flexible
@@ -21,9 +23,12 @@ export interface UserRegistrationData {
 }
 
 export interface LoginData {
+  institutionName: string
+  userType: 'staff' | 'admin' | 'student' | 'parent'
   email: string
   password: string
   remember?: boolean
+  userId?: string
 }
 
 export interface VerificationData {

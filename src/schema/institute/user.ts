@@ -1,8 +1,13 @@
-import mongoose, { type Schema, type Document, type Model } from 'mongoose'
+import mongoose, { type Schema, type Document, type Model, type Connection } from 'mongoose'
 import { validate } from '../../utils/validator'
 import { schemaDefault } from '../../utils/defaultSettings'
-import AppError from '../../utils/appError'
-import httpStatus from 'http-status'
+import type AppError from '../../utils/appError'
+import { generateTemporaryCredentials } from '../../utils/generateCredentials'
+
+export interface LoginDetail {
+  id: string
+  password: string
+}
 
 export interface IUser extends Document {
   firstName: string
@@ -13,6 +18,8 @@ export interface IUser extends Document {
   verified: boolean
   token?: string
   fullName: string
+  id: string
+  loginDetail: LoginDetail
 }
 
 export interface IUserModel extends Model<IUser> {
@@ -40,8 +47,6 @@ export const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
-      required: [true, '{PATH} is required'],
       lowercase: true,
       trim: true,
       validate: {
@@ -49,24 +54,20 @@ export const userSchema: Schema<IUser> = new mongoose.Schema(
         message: () => validate('email').message
       }
     },
-    password: {
-      type: String,
-      required: [true, '{PATH} is required'],
-      select: false,
-      validate: {
-        validator: (value: string) => validate('password').validator(value),
-        message: () => validate('password').message
-      }
-    },
     address: {
       type: Object,
       default: null
     },
-    verified: {
-      type: Boolean,
-      default: false
-    },
-    token: { type: String }
+    loginDetail: {
+      id: {
+        type: String,
+        required: true
+      },
+      password: {
+        type: String,
+        required: true
+      }
+    }
   },
   { ...schemaDefault }
 )
@@ -75,26 +76,19 @@ userSchema.virtual('fullName').get(function (this: IUser) {
   return `${this.firstName} ${this.lastName}`
 })
 
-userSchema.virtual('id').get(function (this: IUser) {
-  return this._id.toHexString()
+userSchema.pre('validate', function (next) {
+  // 'this' refers to the current document being saved
+  const creds = generateTemporaryCredentials()
+
+  this.loginDetail = creds
+
+  console.log('😎 Staff login credentials generated:', this.loginDetail)
+
+  next()
 })
 
-userSchema.statics.get = async function (email: string): Promise<IUser | null> {
-  const user: IUser | null = await this.findOne({ email }).select('+password').exec()
-
-  if (user !== null) {
-    return user
-  }
-
-  throw new AppError(httpStatus.NOT_FOUND, 'User does not exist')
-}
-
-userSchema.statics.checkDuplicateEmail = function (error): Error | AppError {
-  console.log(error, '----------------------mongooge error')
-  if (error.code === 11000) {
-    return new AppError(httpStatus.CONFLICT, "'Email' already exists")
-  }
-  return error
+export const createModel = (DB: Connection): Model<IUser> => {
+  return DB.model('user', userSchema)
 }
 
 export default userSchema

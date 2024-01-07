@@ -41,21 +41,17 @@ export const connectToMasterDB = async (): Promise<Connection> => {
   return await connectToDatabase('master_database')
 }
 
-// const createModel = (college_name: string, year_of_admission: string) => {
-//   const mongoConnection = mongoose.connection.useDb('db_' + college_name)
-//   return mongoConnection.model(
-//     'Student',
-//     StudentModel.StudentSchema,
-//     'students_' + year_of_admission
-//   )
-// }
-
-// export const useDB = (dbName: string): void => {
-//   const mongoConnection = connectToDatabase(dbName)
-// }
+export const useDB = async (dbName: string): Promise<Connection> => {
+  const mongoConnection = connectToDatabase(dbName)
+  return await mongoConnection
+}
 
 export const getDBModel = (db: Connection, modelName: string): Model<Document> => {
   const model = db.model(modelName)
   if (model !== null) return model as Model<Document>
   throw new Error('Model not found')
+}
+
+export const createModel = (db: Connection, modelName: string, modelSchema): Model<Document> => {
+  return db.model(modelName, modelSchema) as Model<Document>
 }
