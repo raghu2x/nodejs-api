@@ -18,9 +18,12 @@ const register = Joi.object({
 })
 
 const login = Joi.object({
-  email: Joi.string().required().email(),
+  email: Joi.string().email().max(30),
+  userId: Joi.string().max(30),
   password: Joi.string().required().max(30),
-  remember: Joi.boolean()
+  remember: Joi.boolean(),
+  institutionName: Joi.string().required().max(30),
+  userType: Joi.string().required().max(30)
 })
 
 const forgotPassword = Joi.object({

@@ -53,11 +53,11 @@ const connectDB = async (req: CustomRequest, res: Response, next: NextFunction):
     }
 
     // 3 extract schoolId from params
-    const schoolId: string | undefined = req.headers['x-school-id'] as string
+    // const schoolId: string | undefined = req.headers['x-school-id'] as string
 
-    if (schoolId === '' || schoolId === undefined) {
-      throw new AppError(httpStatus.NOT_FOUND, 'schoolId is required.')
-    }
+    // if (schoolId === '' || schoolId === undefined) {
+    //   throw new AppError(httpStatus.NOT_FOUND, 'schoolId is required.')
+    // }
 
     // Check if the schoolId exists in the master database
     // const tenantsCollection = masterDb.collection('tenants')
@@ -68,10 +68,10 @@ const connectDB = async (req: CustomRequest, res: Response, next: NextFunction):
     // }
 
     // 4. Connect to the school-specific database
-    const schoolDb = await connectToDatabase(schoolId)
+    // const schoolDb = await connectToDatabase(schoolId)
 
     // 5. Register masterDb schema and masterDb in req for use
-    req.schoolDb = registerSchema(schoolDb, InstituteSchemas)
+    // req.schoolDb = registerSchema(schoolDb, InstituteSchemas)
 
     next()
   } catch (err) {

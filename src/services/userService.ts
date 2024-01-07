@@ -1,5 +1,5 @@
 import { type IUser } from '../schema/institute/user' // users schema
-import { generateToken } from '../utils/authUtils'
+import { compare, generateToken } from '../utils/authUtils'
 import { saveOTP, verifyOTP } from './otpService'
 import sendMail from './sendEmail'
 import userDB from '../database/User'
@@ -11,6 +11,8 @@ import type {
   LoginData
 } from '../utils/interfaces'
 import { type SignOptions } from 'jsonwebtoken'
+import AppError from '../utils/appError'
+import httpStatus from 'http-status'
 
 const sendOTP = async ({ email, otp }: VerificationData): Promise<any> => {
   const data = { otp, to: email }
@@ -28,25 +30,40 @@ const createUser = async (userData: UserRegistrationData, model): Promise<any> =
   return user
 }
 
-const loginUser = async (
-  { remember, ...userForm }: LoginData,
-  model,
-  schooId: string
-): Promise<any> => {
-  const user = await userDB.loginUser(userForm, model)
+const loginUser = async (userData: LoginData, model): Promise<any> => {
+  const { remember, institutionName, email, password } = userData
+
+  // 1. get User using email
+  const user: IUser = await model.get(email)
+
+  // 2. compare passwords
+  if (!(await compare(password, user.password))) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Email or Password is wrong')
+  }
+
+  // 3. check email verification
+  if (!user.verified) throw createError('notVerified', '', 401)
+
+  const { password: userPassword, ...responseUser } = user.toObject()
 
   const jwtOptions: SignOptions = {
     expiresIn: remember === true ? '36h' : process.env.JWT_TOKEN_EXPIRY
   }
 
-  const token = generateToken({ userId: user._id, email: userForm.email, schooId }, jwtOptions)
+  const tokenPayload = {
+    userId: user._id,
+    email,
+    institutionName
+  }
+  const token = generateToken(tokenPayload, jwtOptions)
   console.log('login ________________')
-  return { ...user, token }
+  return { ...responseUser, token }
 }
 
 const verifyAccount = async ({ email, code }: VerificationData, model): Promise<any> => {
   try {
     // verify if account is already verified
+
     const existingUser: IUser = await model.get(email)
     if (existingUser.verified) throw createError('alreadyVerified', '', 200)
 
