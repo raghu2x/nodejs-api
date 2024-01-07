@@ -91,7 +91,7 @@ const deleteRecordById: FunctionI = (modelName, modelSchema) => {
 
 const deleteManyRecords: FunctionI = (modelName, modelSchema) => {
   return async (req, res, next) => {
-    const { ids } = req.body
+    const ids: string[] = req.body.ids
     const { userId } = req.user
     try {
       const model = req.schoolDb.model(modelName, modelSchema)

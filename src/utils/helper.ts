@@ -36,6 +36,9 @@ export interface PaginationQuery {
   ascending?: boolean | string
 }
 
+export interface Query extends PaginationQuery {
+  search?: string[]
+}
 interface PaginationConfig {
   page: number
   size: number

@@ -1,9 +1,9 @@
-import { ModifyResult, type DeleteResult } from 'mongodb'
-import { type Document, type Model } from 'mongoose' // Replace with the actual import
+import { type DeleteResult } from 'mongodb'
+import { type Document, type Model } from 'mongoose'
 import AppError from '../utils/appError'
 import httpStatus from 'http-status'
 import APIFeatures from '../utils/apiFeature'
-import { queryBuilder, type PaginationQuery } from '../utils/helper'
+import { queryBuilder, type PaginationQuery, type Query } from '../utils/helper'
 
 interface AllRecordsReturn {
   totalRecords: number
@@ -14,7 +14,7 @@ interface AllRecordsReturn {
 const getAllRecords = async (
   model: Model<Document>,
   userId: string,
-  query: any
+  query: Query
 ): Promise<AllRecordsReturn> => {
   const searchQuery = queryBuilder(query.search)
 
@@ -57,7 +57,7 @@ const updateOneRecord = async (
   model: Model<Document>,
   userId: string,
   recordId: string,
-  record: any
+  record: Document
 ): Promise<Document> => {
   const updatedRecord = await model.findOneAndUpdate({ userId, _id: recordId }, record, {
     new: true
@@ -72,7 +72,7 @@ const deleteOneRecord = async (
   model: Model<Document>,
   userId: string,
   recordId: string
-): Promise<ModifyResult> => {
+): Promise<Document> => {
   const deletedRecord = await model.findOneAndDelete({ userId, _id: recordId })
   if (deletedRecord !== null) {
     return deletedRecord
