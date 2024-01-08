@@ -10,7 +10,7 @@ import connectDB from './middleware/connectDB'
 
 const app: express.Express = express()
 
-app.use(express.static('src/public'))
+// app.use(express.static('src/public'))
 
 app.use(cookieParser())
 
