@@ -28,7 +28,7 @@ const getAllRecords: FunctionI = (modelName, modelSchema) => {
       const model = createModel(institutionDB, modelName, modelSchema)
 
       console.log(institutionName)
-      const data = await apiService.getAll(model, userId, req.query)
+      const data = await apiService.getAll(model, req.query)
 
       sendSuccessResponse(res, data, httpStatus.OK)
     } catch (error) {
@@ -46,7 +46,7 @@ const getRecordById: FunctionI = (modelName, modelSchema) => {
     const model = createModel(institutionDB, modelName, modelSchema)
 
     try {
-      const data: Record<string, any> = await apiService.getOne(model, userId, id)
+      const data: Record<string, any> = await apiService.getOne(model, id)
       sendSuccessResponse(res, data, httpStatus.OK)
     } catch (error) {
       next(error)
@@ -67,7 +67,7 @@ const createRecord: FunctionI = (modelName, modelSchema) => {
         req.body = await validations[modelName].create.validateAsync(req.body)
       }
 
-      const data: Record<string, any> = await apiService.create(model, userId, req.body)
+      const data: Record<string, any> = await apiService.create(model, req.body)
 
       sendSuccessResponse(res, data, httpStatus.CREATED, 'New record created')
     } catch (error) {
@@ -86,7 +86,7 @@ const updateRecordById: FunctionI = (modelName, modelSchema) => {
     const model = createModel(institutionDB, modelName, modelSchema)
 
     try {
-      const data = await apiService.updateOne(model, userId, id, record)
+      const data = await apiService.updateOne(model, id, record)
       res.send({ success: true, message: 'Record updated successfully', data })
 
       sendSuccessResponse(res, data, httpStatus.OK, 'Record updated successfully')
@@ -105,7 +105,7 @@ const deleteRecordById: FunctionI = (modelName, modelSchema) => {
     const model = createModel(institutionDB, modelName, modelSchema)
 
     try {
-      const data = await apiService.deleteOne(model, userId, id)
+      const data = await apiService.deleteOne(model, id)
       sendSuccessResponse(res, data, httpStatus.OK, 'Record Deleted successfully')
     } catch (error) {
       next(error)
@@ -122,7 +122,7 @@ const deleteManyRecords: FunctionI = (modelName, modelSchema) => {
     const model = createModel(institutionDB, modelName, modelSchema)
 
     try {
-      const data = await apiService.deleteManyRecords(model, userId, ids)
+      const data = await apiService.deleteManyRecords(model, ids)
 
       sendSuccessResponse(res, data, httpStatus.OK, `Deleted ${data.deletedCount} records`)
     } catch (error) {
