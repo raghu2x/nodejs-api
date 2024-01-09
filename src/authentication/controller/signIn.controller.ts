@@ -7,7 +7,7 @@ import AppError from '../../utils/appError'
 import httpStatus from 'http-status'
 
 export const adminSignIn = async (userData: LoginData, model): Promise<any> => {
-  const { remember, institutionName, email, password } = userData
+  const { remember, institutionName, userType, email, password } = userData
 
   // 1. get User using email
   const user: IUser = await model.get(email)
@@ -29,6 +29,7 @@ export const adminSignIn = async (userData: LoginData, model): Promise<any> => {
   const tokenPayload = {
     userId: user._id,
     email,
+    userType,
     institutionName
   }
   const token = generateToken(tokenPayload, jwtOptions)
