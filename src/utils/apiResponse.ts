@@ -53,14 +53,15 @@ export const SendEndpointNotFoundResponse = (req: Request, res: Response): void 
   res.status(httpStatus.NOT_FOUND).json(payload)
 }
 
-export const SendAccountCreatedResponse = (res: Response): void => {
+export const SendAccountCreatedResponse = (res: Response, data: any): void => {
   res.status(httpStatus.CREATED)
 
   res.send({
     success: true,
     timestamp: new Date(),
     statusCode: httpStatus.CREATED,
-    message: 'Account created. Verify your email to continue.'
+    message: 'Account created. Verify your email to continue.',
+    data
   })
 }
 

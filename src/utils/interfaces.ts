@@ -1,13 +1,19 @@
-import type { Request } from 'express'
+import type { Request, NextFunction, Response } from 'express'
 import type { JwtPayload } from 'jsonwebtoken'
 import { type Connection } from 'mongoose'
 
+/**
+ * @deprecated - this is deprecated use import from 'types/common' instead
+ */
 export interface AuthenticatedUser extends JwtPayload {
   userId: string
   institutionName: string
   userType: 'staff' | 'admin' | 'student' | 'parent'
   email: string
 }
+/**
+ * @deprecated - this is deprecated use import from 'types/common' instead
+ */
 export interface AuthenticatedRequest extends Request {
   user: AuthenticatedUser // Use union type to make it flexible
   masterDb: Connection

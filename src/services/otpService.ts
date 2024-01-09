@@ -1,43 +1,39 @@
-import otpModel from '../schema/otp' // users schema
-import { generateOTP, getResetToken } from '../utils/authUtils'
-import { createError } from '../utils/helper'
+import AppError from '@/utils/appError'
+import { generateOTP } from '@/utils/authUtils'
+import httpStatus from 'http-status'
 
 interface OtpData {
   email: string
-  type?: string
-  code?: string
+  otp?: number
 }
 
-const checkIfOtpExists = async (email: string, type: string): Promise<OtpData | false> => {
-  const otpExist = await otpModel.findOne({ email, type })
+const checkIfOtpExists = async (otpModel, email: string): Promise<OtpData | false> => {
+  const otpExist = await otpModel.findOne({ email })
   if (otpExist != null) return otpExist
   return false
 }
 
-const saveOTP = async ({ email, type = 'otp' }: OtpData): Promise<OtpData> => {
-  const existingOtp = await checkIfOtpExists(email, type)
+const saveOTP = async (otpModel, { email }: OtpData): Promise<OtpData> => {
+  const existingOtp = await checkIfOtpExists(otpModel, email)
   if (existingOtp !== false) return existingOtp
 
-  const code = type === 'otp' ? generateOTP() : getResetToken()
+  const otp = generateOTP()
 
-  const newOtp = await otpModel.create({ code, email, type })
-  console.log('otp not exist__________', newOtp)
+  const newOtp = await otpModel.create({ otp, email })
+  console.log('🙈 new OTP generated:', newOtp)
   return newOtp
 }
 
-const verifyOTP = async ({ email, code, type = 'otp' }: OtpData): Promise<boolean> => {
-  try {
-    const existingOtp = await checkIfOtpExists(email, type)
-    if (existingOtp === false) throw new Error(`${type} expired`)
-    console.log(existingOtp.code, code, '__________')
-    if (existingOtp.code !== code) throw createError('invalidOtp', '', 401)
+const verifyOTP = async (model, { email, otp }: OtpData): Promise<boolean> => {
+  const existingOtp = await checkIfOtpExists(model, email)
+  if (existingOtp === false) throw new AppError(httpStatus.BAD_REQUEST, 'OTP expired.')
 
-    // OTP is verified
-    return true
-  } catch (error) {
-    console.error('Error verifying OTP:', error)
-    throw error
+  if (existingOtp.otp !== otp) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Please enter correct OTP.')
   }
+
+  // OTP is verified
+  return true
 }
 
 export { saveOTP, verifyOTP }

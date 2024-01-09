@@ -34,7 +34,7 @@ const forgotPassword = Joi.object({
 
 const resetPassword = Joi.object({
   email: Joi.string().email(),
-  token: Joi.string().required().max(70),
+  otp: Joi.number().required(),
   password: Joi.string().required().pattern(passwordRegx),
   confirmPassword: Joi.string().required().valid(Joi.ref('password'))
 })
@@ -46,4 +46,9 @@ const changePassword = Joi.object({
   confirmPassword: Joi.string().required().valid(Joi.ref('password'))
 })
 
-export default { register, login, forgotPassword, resetPassword, changePassword }
+export const verifyAccount = Joi.object({
+  email: Joi.string().email().max(30),
+  otp: Joi.string().max(6).min(6)
+})
+
+export default { register, login, forgotPassword, resetPassword, changePassword, verifyAccount }
