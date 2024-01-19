@@ -1,19 +1,12 @@
 import { type Model, type Document, type Schema, type Connection } from 'mongoose'
-import { type AuthenticatedUser, type AuthenticatedRequest } from '../utils/interfaces'
 import apiService from './apiService'
-import { type Response, type NextFunction } from 'express'
 import { sendSuccessResponse } from '../utils/apiResponse'
 import httpStatus from 'http-status'
 import validations from '../validations'
 import { useDB } from '../database/connection'
+import { type CustomRequestHandler, type AuthenticatedUser } from '@/types/common'
 
-type AsyncMiddleware = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => Promise<void>
-
-type FunctionI = (modelName: string, modelSchema: Schema<Document>) => AsyncMiddleware
+type FunctionI = (modelName: string, modelSchema: Schema<Document>) => CustomRequestHandler
 
 const createModel = (db: Connection, modelName: string, modelSchema): Model<Document> => {
   return db.model(modelName, modelSchema) as Model<Document>
