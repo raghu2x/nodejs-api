@@ -1,5 +1,5 @@
 import express from 'express'
-import 'dotenv/config'
+
 import router from './router'
 import handleErrors from './middleware/handleErrors'
 import helmet from 'helmet'
