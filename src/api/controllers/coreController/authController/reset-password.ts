@@ -1,12 +1,12 @@
 import { encrypt } from '@/utils/authUtils'
 import { sendSuccessResponse } from '@/utils/apiResponse'
-import userValidation from '@/validations/user.validation'
+import userValidation from '@/api/validations/user.validation'
 import httpStatus from 'http-status'
 
-import { createModel } from '@/schema/master/admin'
+import { createModel } from '@/api/schema/master/admin'
 import { type CustomRequestHandler } from '@/types/common'
-import { verifyOTP } from '@/services/otpService'
-import { createModel as createOTPModel } from '@/schema/otp'
+import { verifyOTP } from '@/api/services/otpService'
+import { createModel as createOTPModel } from '@/api/schema/otp'
 import AppError from '@/utils/appError'
 
 interface ResetPasswordData {

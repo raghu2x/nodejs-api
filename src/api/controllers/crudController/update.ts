@@ -1,6 +1,6 @@
 import { type Document, type Model } from 'mongoose'
 
-import AppError from '../utils/appError'
+import AppError from '@/utils/appError'
 import httpStatus from 'http-status'
 
 export const updateOne = async (

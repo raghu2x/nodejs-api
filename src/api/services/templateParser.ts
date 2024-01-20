@@ -2,7 +2,7 @@ import hbs from 'handlebars'
 import fs from 'fs'
 import path from 'path'
 
-const templatesDir = path.join(__dirname, '..', 'templates')
+const templatesDir = path.join(__dirname, '../public/templates')
 
 export const compileTemplate = (fileName: string, data: any): string => {
   const htmlFilePath = path.join(templatesDir, fileName)

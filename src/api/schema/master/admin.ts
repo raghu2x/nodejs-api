@@ -1,7 +1,7 @@
 import mongoose, { type Schema, type Document, type Model, type Connection } from 'mongoose'
-import { validate } from '../../utils/validator'
-import { schemaDefault } from '../../utils/defaultSettings'
-import AppError from '../../utils/appError'
+import { validate } from '@/utils/validator'
+import { schemaDefault } from '@/utils/defaultSettings'
+import AppError from '@/utils/appError'
 import httpStatus from 'http-status'
 
 export interface IAdminUser extends Document {

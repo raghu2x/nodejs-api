@@ -1,8 +1,8 @@
 import mongoose, { type Schema, type Document, type Model, type Connection } from 'mongoose'
-import { validate } from '../../utils/validator'
-import { schemaDefault } from '../../utils/defaultSettings'
-import type AppError from '../../utils/appError'
-import { generateTemporaryCredentials } from '../../utils/generateCredentials'
+import { validate } from '@/utils/validator'
+import { schemaDefault } from '@/utils/defaultSettings'
+import type AppError from '@/utils/appError'
+import { generateTemporaryCredentials } from '@/utils/generateCredentials'
 
 export interface LoginDetail {
   id: string

@@ -1,12 +1,12 @@
 import { sendSuccessResponse } from '@/utils/apiResponse'
-import userValidation from '@/validations/user.validation'
+import userValidation from '@/api/validations/user.validation'
 import httpStatus from 'http-status'
-import { type IAdminUser, createModel } from '@/schema/master/admin'
+import { type IAdminUser, createModel } from '@/api/schema/master/admin'
 import { type CustomRequestHandler } from '@/types/common'
 import AppError from '@/utils/appError'
-import { createModel as createOTPModel } from '@/schema/otp'
+import { createModel as createOTPModel } from '@/api/schema/otp'
 import { useDB } from '@/database/connection'
-import { verifyOTP } from '@/services/otpService'
+import { verifyOTP } from '@/api/services/otpService'
 
 interface Payload {
   email: string

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { uploadFiles } from './multer'
-import { singleStorageUpload } from '@/middleware/uploadMiddleware'
+import { singleStorageUpload } from '@/api/middlewares/uploadMiddleware'
 
 const router: Router = Router()
 router.use(

@@ -1,9 +1,9 @@
-import { type Query, type PaginationQuery, queryBuilder } from '../utils/helper'
+import { type Query, type PaginationQuery, queryBuilder } from '@/utils/helper'
 import { type Document, type Model } from 'mongoose'
 
-import AppError from '../utils/appError'
+import AppError from '@/utils/appError'
 import httpStatus from 'http-status'
-import APIFeatures from '../utils/apiFeature'
+import APIFeatures from '@/utils/apiFeature'
 
 interface AllRecordsReturn {
   totalRecords: number

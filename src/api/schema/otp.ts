@@ -1,5 +1,5 @@
 import mongoose, { type Schema, type Document, type Model, type Connection } from 'mongoose'
-import { schemaDefault } from '../utils/defaultSettings'
+import { schemaDefault } from '@/utils/defaultSettings'
 
 interface OTP extends Document {
   email: string

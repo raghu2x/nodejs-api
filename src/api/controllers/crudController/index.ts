@@ -1,9 +1,9 @@
 import { type Model, type Document, type Schema, type Connection } from 'mongoose'
 import apiService from './apiService'
-import { sendSuccessResponse } from '../utils/apiResponse'
+import { sendSuccessResponse } from '@/utils/apiResponse'
 import httpStatus from 'http-status'
-import validations from '../validations'
-import { useDB } from '../database/connection'
+import validations from '@/api/validations'
+import { useDB } from '@/database/connection'
 import { type CustomRequestHandler, type AuthenticatedUser } from '@/types/common'
 
 type FunctionI = (modelName: string, modelSchema: Schema<Document>) => CustomRequestHandler

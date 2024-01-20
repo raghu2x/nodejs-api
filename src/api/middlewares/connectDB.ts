@@ -1,18 +1,10 @@
 import { type Connection, type Schema } from 'mongoose'
-import { connectToDatabase, connectToMasterDB } from '../database/connection'
+import { connectToMasterDB } from '@/database/connection'
 import { type Request, type Response, type NextFunction } from 'express'
-import studentSchema from '../schema/institute/student'
-import instituteSchema from '../schema/master/institute'
-import { userSchema } from '../schema/institute/user'
+import instituteSchema from '@/api/schema/master/institute'
 import httpStatus from 'http-status'
-import { sendErrorResponse } from '../utils/apiResponse'
-import AppError from '../utils/appError'
-import adminUserSchema from '../schema/master/admin'
-
-const InstituteSchemas = new Map<string, Schema>([
-  ['student', studentSchema],
-  ['user', userSchema]
-])
+import { sendErrorResponse } from '@/utils/apiResponse'
+import adminUserSchema from '@/api/schema/master/admin'
 
 const TenantSchemas = new Map<string, Schema>([
   ['tenant', instituteSchema],
@@ -51,27 +43,6 @@ const connectDB = async (req: CustomRequest, res: Response, next: NextFunction):
       next()
       return
     }
-
-    // 3 extract schoolId from params
-    // const schoolId: string | undefined = req.headers['x-school-id'] as string
-
-    // if (schoolId === '' || schoolId === undefined) {
-    //   throw new AppError(httpStatus.NOT_FOUND, 'schoolId is required.')
-    // }
-
-    // Check if the schoolId exists in the master database
-    // const tenantsCollection = masterDb.collection('tenants')
-    // const tenantExists = await tenantsCollection.findOne({ schoolId })
-
-    // if (tenantExists === null) {
-    //   throw new AppError(httpStatus.NOT_FOUND, `School '${schoolId}' does not exist.`)
-    // }
-
-    // 4. Connect to the school-specific database
-    // const schoolDb = await connectToDatabase(schoolId)
-
-    // 5. Register masterDb schema and masterDb in req for use
-    // req.schoolDb = registerSchema(schoolDb, InstituteSchemas)
 
     next()
   } catch (err) {

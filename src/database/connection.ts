@@ -1,3 +1,4 @@
+import { env } from '@/utils/env'
 import mongoose, { type Model, type Connection, type Document, type ConnectOptions } from 'mongoose'
 // import { DB_CONFIG } from '../config'
 
@@ -15,6 +16,26 @@ interface ConnectionInfo {
 
 const connections: ConnectionInfo[] = []
 
+export const createConnection = async (dbName: string): Promise<Connection> => {
+  try {
+    const uri = `${process.env.MONGO_URI}/${dbName}`
+    const existingConnection = connections.find(conn => conn.uri === uri)
+
+    if (existingConnection?.connection !== undefined) {
+      return existingConnection.connection
+    }
+
+    const newConnection = mongoose.createConnection(env('MONGO_URI'), clientOption)
+
+    connections.push({ uri, connection: newConnection })
+    console.log(`Connected to the database: ${uri}`)
+
+    return newConnection
+  } catch (error) {
+    console.error(`Error connecting to the database: ${dbName}`, error)
+    throw error
+  }
+}
 export const connectToDatabase = async (dbName: string): Promise<Connection> => {
   try {
     const uri = `${process.env.MONGO_URI}/${dbName}`
