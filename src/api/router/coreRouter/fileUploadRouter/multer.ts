@@ -1,4 +1,4 @@
-import { sendSuccessResponse } from './../utils/apiResponse'
+import { sendSuccessResponse } from '@/utils/apiResponse'
 import { type CustomRequestHandler } from '@/types/common'
 
 export const uploadFiles: CustomRequestHandler = (req, res) => {

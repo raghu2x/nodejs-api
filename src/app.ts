@@ -1,6 +1,6 @@
 import express from 'express'
 
-import router from './router'
+import router from '@/api/router'
 import handleErrors from './middleware/handleErrors'
 import helmet from 'helmet'
 import cors from 'cors'
