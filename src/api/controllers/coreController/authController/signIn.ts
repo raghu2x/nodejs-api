@@ -1,24 +1,19 @@
-import { type AuthenticatedRequest, type LoginData } from '../utils/interfaces'
-import { type Response, type NextFunction } from 'express'
-import { useDB } from '../database/connection'
-import userValidation from '../validations/user.validation'
-import { SendLoginResponse } from '../utils/apiResponse'
-import { adminSignIn, userSignIn } from './controller/signIn.controller'
-import { env } from '../utils/env'
-import AppError from '../utils/appError'
+import { type LoginData } from '@/utils/interfaces'
+import { useDB } from '@/database/connection'
+import userValidation from '@/validations/user.validation'
+import { SendLoginResponse } from '@/utils/apiResponse'
+import adminLogin from './admin-login'
+import userLogin from './user-login'
+import { env } from '@/utils/env'
+import AppError from '@/utils/appError'
 import httpStatus from 'http-status'
 
 // models
-import { createModel as createStaffModel } from '../schema/institute/user'
-import { createModel as createStudentModel } from '../schema/institute/student'
-import { createModel as createAdminModel } from '../schema/master/admin'
-import { USER_TYPES } from '../data/constants'
-
-type AuthRequestHandler = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => Promise<void>
+import { createModel as createStaffModel } from '@/schema/institute/user'
+import { createModel as createStudentModel } from '@/schema/institute/student'
+import { createModel as createAdminModel } from '@/schema/master/admin'
+import { USER_TYPES } from '@/data/constants'
+import { type CustomRequestHandler } from '@/types/common'
 
 interface LoginResponse {
   token: string
@@ -30,7 +25,7 @@ const cookieOptions = {
   path: '/'
 }
 
-export const loginAccount: AuthRequestHandler = async (req, res, next) => {
+export const loginAccount: CustomRequestHandler = async (req, res, next) => {
   // const ipAddress = req.headers['x-forwarded-for'] ?? req.connection.remoteAddress
   try {
     const loginData: LoginData = await userValidation.login.validateAsync(req.body)
@@ -40,16 +35,11 @@ export const loginAccount: AuthRequestHandler = async (req, res, next) => {
     let user: LoginResponse = { token: '' }
     let model
 
-    // 1. validate userType
-    // if (Object.values(USER_TYPES).includes(userType)) {
-    //   throw new AppError(httpStatus.BAD_REQUEST, `'${userType}' is not a valid userType.`)
-    // }
-
     if (userType === USER_TYPES.ADMIN) {
       const masterDB = await useDB('master_database')
       model = createAdminModel(masterDB)
       // 1. Login admin user
-      user = await adminSignIn(loginData, model)
+      user = await adminLogin(loginData, model)
     } else {
       const institutionDB = await useDB(institutionName)
 
@@ -64,7 +54,7 @@ export const loginAccount: AuthRequestHandler = async (req, res, next) => {
           throw new AppError(httpStatus.BAD_REQUEST, `'${userType}' is not a valid userType.`)
       }
 
-      user = await userSignIn(loginData, model)
+      user = await userLogin(loginData, model)
     }
 
     // Generate token & send Response

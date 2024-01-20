@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken'
-import { sendErrorResponse } from '../utils/apiResponse'
+import { sendErrorResponse } from '../../../../utils/apiResponse'
 import httpStatus from 'http-status'
-import { env } from '../utils/env'
+import { env } from '../../../../utils/env'
 import { type CustomRequestHandler, type AuthenticatedUser } from '@/types/common'
 
 const verifyToken: CustomRequestHandler = (req, res, next) => {
