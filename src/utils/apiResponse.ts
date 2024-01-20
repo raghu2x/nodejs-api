@@ -6,13 +6,13 @@ interface Payload {
   timestamp: Date
   message?: string
   statusCode: number
-  data?: Record<string, any>
+  data?: any
   error?: Record<string, any>
 }
 
-export const sendSuccessResponse = (
+export const sendSuccessResponse = <T = any>(
   res: Response,
-  data?: Record<string, any>,
+  data?: T,
   statusCode: number = httpStatus.OK,
   message?: string
 ): void => {

@@ -27,3 +27,6 @@ Thumbs.db
 *.rdb
 
 .vercel
+
+# multer uploaded images and other temp files
+.temp

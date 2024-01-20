@@ -5,12 +5,13 @@ import handleErrors from './middleware/handleErrors'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-
 import connectDB from './middleware/connectDB'
 
 const app: express.Express = express()
 
-// app.use(express.static('src/public'))
+// app.use('/uploads', express.static(path.join(__dirname, '../.temp/uploads')))
+
+app.use(express.static('src/public'))
 
 app.use(cookieParser())
 

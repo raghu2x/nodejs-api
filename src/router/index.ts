@@ -5,8 +5,24 @@ import authRouter from './authRouter'
 import crudRouter from '../crud/apiRouter'
 import { apiLimiter, createAccountLimiter } from '../utils/rateLimiter'
 import { SendEndpointNotFoundResponse } from '../utils/apiResponse'
+import { uploadFiles } from './multer'
+import coreRouter from './coreRouter'
+import { singleStorageUpload } from '@/middleware/uploadMiddleware'
 
 const router: Router = Router()
+
+router.use(coreRouter.corePublicRoute)
+
+router.use(
+  '/api/upload-file',
+  singleStorageUpload({ entity: 'setting', fieldName: 'photo', fileType: 'image' }),
+  uploadFiles
+)
+router.use(
+  '/api/upload-pdf',
+  singleStorageUpload({ entity: 'setting', fieldName: 'file', fileType: 'pdf' }),
+  uploadFiles
+)
 
 // api rate limiters
 router.use('/', apiLimiter)
