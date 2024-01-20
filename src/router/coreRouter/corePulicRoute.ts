@@ -1,35 +1,31 @@
-import express, { type Request, type Response } from 'express'
+import { sendErrorResponse } from '@/utils/apiResponse'
+import express, { type NextFunction, type Request, type Response } from 'express'
+import httpStatus from 'http-status'
 import path from 'path'
 
 const router = express.Router()
 
-router.route('/:subPath/:directory/:file').get((req: Request, res: Response) => {
-  try {
-    const { subPath, directory, file } = req.params
+router
+  .route('/:subPath/:directory/:file')
+  .get((req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { subPath, directory, file } = req.params
 
-    const options = {
-      root: path.join(__dirname, `../../public/${subPath}/${directory}`)
-    }
-
-    const fileName = file
-
-    res.sendFile(fileName, options, error => {
-      if (error) {
-        res.status(404).json({
-          success: false,
-          result: null,
-          message: 'We could not find: ' + file
-        })
+      const options = {
+        root: path.join(__dirname, `../../public/${subPath}/${directory}`)
       }
-    })
-  } catch (error) {
-    res.status(503).json({
-      success: false,
-      result: null,
-      message: error.message,
-      error
-    })
-  }
-})
+
+      const fileName = file
+
+      res.sendFile(fileName, options, error => {
+        if (error instanceof Error) {
+          console.log('Can`t find file', error)
+          sendErrorResponse(res, httpStatus.NOT_FOUND, `We could not find: ${file}`)
+        }
+      })
+    } catch (error) {
+      sendErrorResponse(res, httpStatus.SERVICE_UNAVAILABLE, error.message as string)
+    }
+  })
 
 export default router
