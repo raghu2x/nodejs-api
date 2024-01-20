@@ -1,4 +1,4 @@
-import { type IUser } from '@/schema/institute/user' // users schema
+import { type IUser } from '@/api/schema/institute/user' // users schema
 import { compare, generateToken } from '@/utils/authUtils'
 import { createError } from '@/utils/helper'
 import type { LoginData } from '@/utils/interfaces'

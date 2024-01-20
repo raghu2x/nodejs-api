@@ -1,10 +1,10 @@
 import { sendSuccessResponse } from '@/utils/apiResponse'
-import userValidation from '@/validations/user.validation'
+import userValidation from '@/api/validations/user.validation'
 import httpStatus from 'http-status'
 import { type CustomRequestHandler } from '@/types/common'
-import { saveOTP } from '@/services/otpService'
-import { createModel as createOTPModel } from '@/schema/otp'
-import sendMail from '@/services/sendEmail'
+import { saveOTP } from '@/api/services/otpService'
+import { createModel as createOTPModel } from '@/api/schema/otp'
+import sendMail from '@/api/services/sendEmail'
 import { type Connection } from 'mongoose'
 
 interface ForgotPasswordReqData {

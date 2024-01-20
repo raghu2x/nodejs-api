@@ -1,11 +1,11 @@
 import express from 'express'
 
 import router from '@/api/router'
-import handleErrors from './middleware/handleErrors'
+import handleErrors from './api/middlewares/handleErrors'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import connectDB from './middleware/connectDB'
+import connectDB from './api/middlewares/connectDB'
 
 const app: express.Express = express()
 

@@ -1,4 +1,4 @@
-import { MAIL_SETTINGS, type MailSetting } from '../config'
+import { MAIL_SETTINGS, type MailSetting } from '../../config'
 import nodemailer, {
   type Transporter,
   type SendMailOptions,

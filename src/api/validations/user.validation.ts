@@ -1,4 +1,4 @@
-import { USER_TYPES } from '../data/constants'
+import { USER_TYPES } from '../../data/constants'
 import * as Joi from 'joi'
 
 // console.log(Object.values(USER_TYPES))

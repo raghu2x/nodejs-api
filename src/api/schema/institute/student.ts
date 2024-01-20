@@ -1,7 +1,7 @@
 import { Schema, type Document, type Connection, type Model } from 'mongoose'
-import { schemaDefault } from '../../utils/defaultSettings'
-import { enums } from '../../data' // Assuming BookStatus is an enum or constants for allowed book status values.
-import { generateTemporaryCredentials } from '../../utils/generateCredentials'
+import { schemaDefault } from '@/utils/defaultSettings'
+import { enums } from '@/data' // Assuming BookStatus is an enum or constants for allowed book status values.
+import { generateTemporaryCredentials } from '@/utils/generateCredentials'
 
 export interface LoginDetail {
   id: string

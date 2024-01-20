@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import { type Schema, type Document } from 'mongoose' // Import Mongoose types or replace with your actual import
 
-import models from '../schema'
-import controller from './apiController'
+import models from '@/api/schema'
+import controller from '@/api/controllers/crudController'
 
 const router = Router()
 /* eslint-disable */

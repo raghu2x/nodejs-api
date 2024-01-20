@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
-import { sendErrorResponse } from '../utils/apiResponse'
-import type AppError from '../utils/appError'
+import { sendErrorResponse } from '@/utils/apiResponse'
+import type AppError from '@/utils/appError'
 import httpStatus from 'http-status'
 
 interface IError extends AppError {

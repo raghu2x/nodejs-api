@@ -1,6 +1,6 @@
 import { type LoginData } from '@/utils/interfaces'
 import { useDB } from '@/database/connection'
-import userValidation from '@/validations/user.validation'
+import userValidation from '@/api/validations/user.validation'
 import { SendLoginResponse } from '@/utils/apiResponse'
 import adminLogin from './admin-login'
 import userLogin from './user-login'
@@ -9,9 +9,9 @@ import AppError from '@/utils/appError'
 import httpStatus from 'http-status'
 
 // models
-import { createModel as createStaffModel } from '@/schema/institute/user'
-import { createModel as createStudentModel } from '@/schema/institute/student'
-import { createModel as createAdminModel } from '@/schema/master/admin'
+import { createModel as createStaffModel } from '@/api/schema/institute/user'
+import { createModel as createStudentModel } from '@/api/schema/institute/student'
+import { createModel as createAdminModel } from '@/api/schema/master/admin'
 import { USER_TYPES } from '@/data/constants'
 import { type CustomRequestHandler } from '@/types/common'
 
