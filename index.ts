@@ -1,3 +1,11 @@
+import 'module-alias/register'
+
+/* eslint-disable n/no-path-concat */
+// moduleAlias.addAliases({
+//   '@': `${__dirname}/src`
+// })
+
+/* eslint-disable import/first */
 import 'dotenv/config'
 import app from './src/app'
 import io from '@/config/socket-io'

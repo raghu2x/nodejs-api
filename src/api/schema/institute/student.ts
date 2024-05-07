@@ -2,6 +2,7 @@ import { Schema, type Document, type Connection, type Model } from 'mongoose'
 import { schemaDefault } from '@/utils/defaultSettings'
 import { enums } from '@/data' // Assuming BookStatus is an enum or constants for allowed book status values.
 import { generateTemporaryCredentials } from '@/utils/generateCredentials'
+import { getModelByTenant } from '@/database/connection'
 
 export interface LoginDetail {
   id: string
@@ -62,6 +63,10 @@ studentSchema.pre('validate', function (next) {
 
 export const createModel = (DB: Connection): Model<StudentType> => {
   return DB.model('Student', studentSchema)
+}
+
+export const getStudentModel = (tenantId: string): Model<StudentType> => {
+  return getModelByTenant<StudentType>(tenantId, 'student', studentSchema)
 }
 
 export default studentSchema

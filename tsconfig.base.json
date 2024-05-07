@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // "types": ["node"],
-    "noEmit": false, // enable to genrate compiled js file in outDir
+    // "noEmit": false, // enable to genrate compiled js file in outDir
     "target": "ES6",
     "module": "commonjs",
     // "strict": true,

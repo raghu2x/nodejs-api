@@ -30,7 +30,7 @@ const registerSchema = (db: Connection, dbSchema): Connection => {
 const connectDB = async (req: CustomRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     // 1. Connect to the master database
-    const masterDb: Connection = await connectToMasterDB()
+    const masterDb: Connection = connectToMasterDB()
 
     // 2. Register masterDb schema and masterDb in req for use
     req.masterDb = registerSchema(masterDb, TenantSchemas)

@@ -1,11 +1,8 @@
 import { Router, type Request, type Response } from 'express'
 import { MAIL_SETTINGS } from '@/config'
-import { type AuthenticatedRequest } from 'utils/interfaces'
+import { type AuthenticatedRequest } from '@/types/common'
 
-import { getDBModel } from '@/database/connection'
-import AppError from '@/utils/appError'
-import httpStatus from 'http-status'
-import { sendErrorResponse, sendSuccessResponse } from '@/utils/apiResponse'
+import { sendErrorResponse } from '@/utils/apiResponse'
 
 const router: Router = Router()
 
@@ -50,13 +47,11 @@ router.get('/api/endpoints', (req: Request, res: Response) => {
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.post('/api/create-tenant', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const model = getDBModel(req.masterDb, 'tenant')
-    const existingTenant = await model.findOne({ schoolId: req.body.schoolId })
-    if (existingTenant != null) throw new AppError(httpStatus.CONFLICT, 'schoolId already exist')
-
-    const data = await model.create(req.body)
-
-    sendSuccessResponse(res, data, httpStatus.CREATED, 'Tenant created!')
+    // const model = getDBModel(req.masterDb, 'tenant')
+    // const existingTenant = await model.findOne({ schoolId: req.body.schoolId })
+    // if (existingTenant != null) throw new AppError(httpStatus.CONFLICT, 'schoolId already exist')
+    // const data = await model.create(req.body)
+    // sendSuccessResponse(res, data, httpStatus.CREATED, 'Tenant created!')
   } catch (error) {
     sendErrorResponse(res, error.statusCode, error.message)
   }

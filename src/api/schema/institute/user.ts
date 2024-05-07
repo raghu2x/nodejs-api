@@ -1,8 +1,8 @@
 import mongoose, { type Schema, type Document, type Model, type Connection } from 'mongoose'
 import { validate } from '@/utils/validator'
 import { schemaDefault } from '@/utils/defaultSettings'
-import type AppError from '@/utils/appError'
 import { generateTemporaryCredentials } from '@/utils/generateCredentials'
+import { getModelByTenant } from '@/database/connection'
 
 export interface LoginDetail {
   id: string
@@ -25,8 +25,6 @@ export interface IUser extends Document {
 export interface IUserModel extends Model<IUser> {
   // Define your static methods here
   get: (email: string) => Promise<IUser>
-  checkDuplicateEmail: (error: Error) => Error | AppError
-  correctPassword: (password: string) => true
 }
 
 export const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -89,6 +87,10 @@ userSchema.pre('validate', function (next) {
 
 export const createModel = (DB: Connection): Model<IUser> => {
   return DB.model('user', userSchema)
+}
+
+export const getUserModel = (tenantId: string): Model<IUser> => {
+  return getModelByTenant<IUser>(tenantId, 'student', userSchema)
 }
 
 export default userSchema
