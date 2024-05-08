@@ -1,9 +1,9 @@
-import 'module-alias/register'
-
+import moduleAlias from 'module-alias'
+import { join } from 'path'
 /* eslint-disable n/no-path-concat */
-// moduleAlias.addAliases({
-//   '@': `${__dirname}/src`
-// })
+moduleAlias.addAliases({
+  '@': join(`${__dirname}/src`)
+})
 
 /* eslint-disable import/first */
 import 'dotenv/config'
@@ -17,5 +17,5 @@ const { API_PORT, SOCKET_IO_PORT } = appConstants
 io.listen(SOCKET_IO_PORT)
 
 app.listen(API_PORT, () => {
-  console.log(`________________server is running at port ${API_PORT}`)
+  console.log(`________________server is running at port ${API_PORT}.`)
 })
