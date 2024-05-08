@@ -1,8 +1,9 @@
-import { Schema, type Document } from 'mongoose'
+import { Schema, type Document, type Model } from 'mongoose'
 import { schemaDefault } from '@/utils/defaultSettings'
 import { enums } from '@/data' // Assuming BookStatus is an enum or constants for allowed book status values.
 import httpStatus from 'http-status'
 import AppError from '@/utils/appError'
+import { getModelByTenant } from '@/database/connection'
 
 export interface InstituteType extends Document {
   name: string
@@ -43,6 +44,10 @@ instituteSchema.statics.get = async function (email: string): Promise<InstituteT
   }
 
   throw new AppError(httpStatus.NOT_FOUND, 'Institute does not exist')
+}
+
+export const getStudentModel = (tenantId: string): Model<InstituteType> => {
+  return getModelByTenant<InstituteType>(tenantId, 'institue', instituteSchema)
 }
 
 export default instituteSchema

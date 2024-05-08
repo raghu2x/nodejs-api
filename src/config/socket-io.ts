@@ -12,8 +12,8 @@ io.on('connection', (socket: Socket) => {
   })
 })
 
-// setInterval(() => {
-//   io.emit('new_order/restaurant_id/1', { name: 'Raghvendra Yadav', age: 21 })
-// }, 2000)
+setInterval(() => {
+  io.emit('new_order/restaurant_id/1', { name: 'Raghvendra Yadav', age: 21 })
+}, 2000)
 
 export default io
